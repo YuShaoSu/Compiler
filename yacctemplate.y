@@ -11,7 +11,6 @@ extern char buf[256];           /* declared in lex.l */
 %token SEMICOLON    /* ; */
 %token ID           /* identifier */
 %token INT          /* keyword */
-
 %%
 
 program : decl_and_def_list
@@ -34,6 +33,9 @@ type : INT
 
 identifier : ID
 	   ;	
+
+
+
 
 %%
 
