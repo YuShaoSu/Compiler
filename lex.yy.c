@@ -3093,6 +3093,7 @@ void yyfree (void * ptr )
 
 
 
+/*
 int main( int argc, char **argv )
 {
 
@@ -3136,7 +3137,7 @@ int main( int argc, char **argv )
 	}
 
   	exit(0);
-}
+}*/
 void set(id **head, char *yytext)
 {
 	id *offset = *head;
