@@ -6,6 +6,8 @@ extern int linenum;             /* declared in lex.l */
 extern FILE *yyin;              /* declared by lex */
 extern char *yytext;            /* declared by lex */
 extern char buf[256];           /* declared in lex.l */
+int yylex();
+int yyerror();
 %}
 %token SEMICOLON    /* ; */
 %token ID           /* identifier */
@@ -225,12 +227,6 @@ expression_list : expression ',' expression_list
 				| expression
 				|
 				;
-
-
-
-
-
-
 
 
 %%

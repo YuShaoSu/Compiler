@@ -1,5 +1,5 @@
 %{
-#include <bsd/string.h>
+#include <string.h>
 #include "y.tab.h"
 
 #define MAX_LINE_LENGTH 257
@@ -227,31 +227,85 @@ id *new_id();
 		return '!';
 	}
 
-read |
-boolean |
-while |
-do |
-if |
-else |
-true | 
-false | 
-for | 
-const | 
-int | 
-print |
-bool | 
-void | 
-float | 
-double | 
-string |
-continue | 
-break | 
+read	{
+		tokenString("KW", yytext);
+		return READ;
+	}
+boolean	{
+		tokenString("KW", yytext);
+		return BOOLEAN;
+	}
+while	{
+		tokenString("KW", yytext);
+		return WHILE;
+	}
+do	{
+		tokenString("KW", yytext);
+		return DO;
+	}
+if	{
+		tokenString("KW", yytext);
+		return IF;
+	}
+else	{
+		tokenString("KW", yytext);
+		return ELSE;
+	}
+true	{
+		tokenString("KW", yytext);
+		return TRUE;
+	}
+false	{
+		tokenString("KW", yytext);
+		return FALSE;
+	}
+for	{
+		tokenString("KW", yytext);
+		return FOR;
+	} 
+const	{
+		tokenString("KW", yytext);
+		return CONST;
+	}
+int	{
+		tokenString("KW", yytext);
+		return INT;
+	} 
+print	{
+		tokenString("KW", yytext);
+		return PRINT;
+	}
+bool	{
+		tokenString("KW", yytext);
+		return BOOL;
+	} 
+void	{
+		tokenString("KW", yytext);
+		return VOID;
+	} 
+float	{
+		tokenString("KW", yytext);
+		return FLOAT;
+	} 
+double	{
+		tokenString("KW", yytext);
+		return DOUBLE;
+	} 
+string	{
+		tokenString("KW", yytext);
+		return STRING;
+	}
+continue	{
+			tokenString("KW", yytext);
+			return CONTINUE;
+		}
+break 	{
+		tokenString("KW", yytext);
+		return BREAK;
+	}
 return	{
 		tokenString("KW", yytext);
-		for(int i = 0; i < yyleng; ++i){
-			buf_trans[i] = toupper(yytext[i]);
-		}
-		return buf_trans;
+		return RETURN;
 	}
 
 0 |
