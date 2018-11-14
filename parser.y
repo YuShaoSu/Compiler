@@ -205,7 +205,7 @@ procedure_call : funciton_invocation
 funciton_invocation : ID '(' expression_list ')' SEMICOLON
 				;
 			
-expression_list : expression ',' expression_list
+expression_list : expression_list ',' expression
 				| expression
 				|
 				;

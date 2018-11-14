@@ -136,7 +136,7 @@
 
  100  funciton_invocation : ID '(' expression_list ')' SEMICOLON
 
- 101  expression_list : expression ',' expression_list
+ 101  expression_list : expression_list ',' expression
  102                  | expression
  103                  |
 
@@ -887,6 +887,7 @@ state 68
 	'-'  shift 51
 	'!'  shift 52
 	'('  shift 53
+	','  reduce 103
 	')'  reduce 103
 
 	expression  goto 98
@@ -1324,6 +1325,7 @@ state 87
 	'-'  shift 51
 	'!'  shift 52
 	'('  shift 53
+	','  reduce 103
 	'}'  reduce 103
 
 	expression  goto 98
@@ -1460,7 +1462,6 @@ state 98
 	expression : expression . EQ expression  (74)
 	expression : expression . GE expression  (75)
 	expression : expression . NE expression  (76)
-	expression_list : expression . ',' expression_list  (101)
 	expression_list : expression .  (102)
 
 	'*'  shift 73
@@ -1476,14 +1477,16 @@ state 98
 	NE  shift 83
 	AND  shift 84
 	OR  shift 85
-	','  shift 144
+	','  reduce 102
 	'}'  reduce 102
 	')'  reduce 102
 
 
 state 99
 	funciton_invocation : ID '(' expression_list . ')' SEMICOLON  (100)
+	expression_list : expression_list . ',' expression  (101)
 
+	','  shift 144
 	')'  shift 145
 	.  error
 
@@ -1980,7 +1983,9 @@ state 116
 
 state 117
 	initial_array : '{' expression_list . '}'  (27)
+	expression_list : expression_list . ',' expression  (101)
 
+	','  shift 144
 	'}'  shift 147
 	.  error
 
@@ -2319,8 +2324,7 @@ state 143
 
 
 state 144
-	expression_list : expression ',' . expression_list  (101)
-	expression_list : .  (103)
+	expression_list : expression_list ',' . expression  (101)
 
 	ID  shift 44
 	SCIENTIFIC  shift 45
@@ -2332,11 +2336,9 @@ state 144
 	'-'  shift 51
 	'!'  shift 52
 	'('  shift 53
-	'}'  reduce 103
-	')'  reduce 103
+	.  error
 
-	expression  goto 98
-	expression_list  goto 164
+	expression  goto 164
 	literal_const  goto 55
 	expression_component  goto 56
 	funciton_invocation  goto 57
@@ -2597,9 +2599,37 @@ state 163
 
 
 state 164
-	expression_list : expression ',' expression_list .  (101)
+	expression : expression . '-' expression  (64)
+	expression : expression . '*' expression  (65)
+	expression : expression . '/' expression  (66)
+	expression : expression . '%' expression  (67)
+	expression : expression . '+' expression  (68)
+	expression : expression . AND expression  (69)
+	expression : expression . OR expression  (70)
+	expression : expression . '<' expression  (71)
+	expression : expression . '>' expression  (72)
+	expression : expression . LE expression  (73)
+	expression : expression . EQ expression  (74)
+	expression : expression . GE expression  (75)
+	expression : expression . NE expression  (76)
+	expression_list : expression_list ',' expression .  (101)
 
-	.  reduce 101
+	'*'  shift 73
+	'/'  shift 74
+	'%'  shift 75
+	'+'  shift 76
+	'-'  shift 77
+	'<'  shift 78
+	'>'  shift 79
+	LE  shift 80
+	EQ  shift 81
+	GE  shift 82
+	NE  shift 83
+	AND  shift 84
+	OR  shift 85
+	','  reduce 101
+	'}'  reduce 101
+	')'  reduce 101
 
 
 state 165
