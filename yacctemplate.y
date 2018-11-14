@@ -17,8 +17,9 @@ int yyerror();
 %token READ PRINT
 %token WHILE DO IF ELSE FOR CONTINUE BREAK RETURN
 %token BOOLEAN TRUE FALSE /* not yet */
-%token '(' ')' ',' ';' '[' ']' '{' '}' '='
+//%token '(' ')' ',' ';' '[' ']' '{' '}' '='
 //%right '-'
+%token LLP
 %left '*' '/' '%'
 %left '+' '-'
 %left '<' '>' LE EQ GE NE
@@ -30,19 +31,18 @@ int yyerror();
 program : decl_and_def_list
 	;
 
-decl_and_def_list : decl_and_def_list declaration_list
-			| decl_and_def_list definition_list
-			| definition_list
-			| declaration_list
+decl_and_def_list : declaration_list decl_and_def_list
+			| definition_list decl_and_def_list_mustdef
 			;
 
-declaration_list : declaration_list const_decl
-                 | declaration_list var_decl
-                 | declaration_list funct_decl
-				 | const_decl
+decl_and_def_list_mustdef : declaration_list decl_and_def_list_mustdef
+						| definition_list decl_and_def_list_mustdef
+						|
+						;			
+
+declaration_list : const_decl
 				 | var_decl
 				 | funct_decl
-				 |
 				 ;
 
 definition_list : funct_defi
@@ -66,9 +66,11 @@ array_int : '[' INTEGER ']'
 		| '[' INTEGER ']' array_int
 		;
 
-identifier_list : identifier_list ',' identifier_list
+identifier_list : identifier_list ',' identifier
 				| identifier
+				| identifier_list ',' ID '=' expression
 				| ID '=' expression
+				| identifier_list ',' ID array_int '=' initial_array
 				| ID array_int '=' initial_array
 				;
 
@@ -89,20 +91,18 @@ literal_const : INTEGER
 			;
 
 funct_decl : scalar_type ID '(' arguments ')' SEMICOLON
-		| scalar_type ID '(' ')' SEMICOLON
 		| VOID ID '(' arguments ')' SEMICOLON
-		| VOID ID '(' ')' SEMICOLON
 		;
 
 funct_defi : scalar_type ID '(' arguments ')' compound
 		| VOID ID '(' arguments ')' compound
 		;
 	
-arguments : nomempty_arguments
+arguments : nonempty_arguments
 		|
 		;
 
-nomempty_arguments : arguments ',' argument
+nonempty_arguments : nonempty_arguments ',' argument
 		| argument 
 		;
 
@@ -121,20 +121,13 @@ statement : compound
 
 
 compound : '{' compound_list '}'
-		| '{' '}'
 	;
 
-compound_list : declaration_list_const_var compound_list
+compound_list : var_decl compound_list
+			| const_decl compound_list
 			| statement compound_list
-			| statement
-			| declaration_list_const_var
+			|
 	;
-
-declaration_list_const_var : declaration_list_const_var const_decl
-                 | declaration_list_const_var var_decl
-				 | const_decl
-				 | var_decl
-				;
 
 simple : variable_reference '=' expression SEMICOLON
 	| PRINT variable_reference SEMICOLON
@@ -154,7 +147,7 @@ array_expre : '[' expression ']' array_expre
 		;
 
 expression : expression_component
-		| expression operator expression
+		| expression_component operator expression
 		| '(' expression ')'
 		| '!' expression
 		| '-' expression

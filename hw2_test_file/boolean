@@ -4,13 +4,11 @@
 int main()
 {
 
-        bool a, b;
+        bool b;
         bool c;
 
-        a = true;
         b = false;
-        c = a && b;
         c = b && false;
-        c = a || true;
-        c = a && b || true && false;
+        c = b || true;
+        c = 1 && b || true && false;
 }

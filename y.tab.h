@@ -65,12 +65,13 @@
      BOOLEAN = 281,
      TRUE = 282,
      FALSE = 283,
-     NE = 284,
-     GE = 285,
-     EQ = 286,
-     LE = 287,
-     AND = 288,
-     OR = 289
+     LLP = 284,
+     NE = 285,
+     GE = 286,
+     EQ = 287,
+     LE = 288,
+     AND = 289,
+     OR = 290
    };
 #endif
 /* Tokens.  */
@@ -100,12 +101,13 @@
 #define BOOLEAN 281
 #define TRUE 282
 #define FALSE 283
-#define NE 284
-#define GE 285
-#define EQ 286
-#define LE 287
-#define AND 288
-#define OR 289
+#define LLP 284
+#define NE 285
+#define GE 286
+#define EQ 287
+#define LE 288
+#define AND 289
+#define OR 290
 
 
 
