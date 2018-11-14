@@ -1,0 +1,7 @@
+yy.lex.c
+y.output
+y.tab.c
+y.tab.h
+parser
+hw2_test_file/
+lex.yy.c
