@@ -16,6 +16,7 @@ int linenum = 1;
 int Last_State = 0;
 char buf[MAX_LINE_LENGTH];
 char strContent[MAX_STRING_LENGTH];
+char buf_trans[MAX_STRING_LENGTH];
 typedef struct ids{
 	char id_name[MAX_ID_LENGTH];
 	int freq;
@@ -135,73 +136,97 @@ id *new_id();
 	}
 "("	{
 		tokenString("delim", "(");
+		return '(';
 	}
 ")"	{
 		tokenString("delim", ")");
+		return ')';
 	}
 ","	{
 		tokenString("delim", ",");
+		return ',';
 	}
 ";"	{
 		tokenString("delim", ";");
+		return SEMICOLON;
 	}
 "["	{
 		tokenString("delim", "[");
+		return '[';
 	}
 "]"	{
 		tokenString("delim", "]");
+		return ']';
 	}
 "{"	{
 		tokenString("delim", "{");
+		return '{';
 	}
 "}"	{
 		tokenString("delim", "}");
+		return '}';
 	}
 "+"	{
 		token("+");
+		return '+';
 	}
 "-"	{
 		token("-");
+		return '-';
 	}
 "*"	{
 		token("*");
+		return '*';
 	}
 "/"	{
 		token("/");
+		return '/';
 	}
 "%"	{
 		token("%");
+		return '%';
 	}
 "="	{
 		token("=");
+		return '=';
 	}
 "<"	{
 		token("<");
+		return '<';
 	}
 "<="	{
 		token("<=");
+		return LE;
 	}
 "!="	{
 		token("!=");
+		return NE;
 	}
 ">="	{
 		token(">=");
+		return GE;
 	}
 ">"	{
 		token(">");
+		return '>';
 	}
 "=="	{
 		token("==");
+		return EQ;
 	}
 "&&"	{
 		token("&&");
+		return AND;
 	}
 "||"	{
 		token("||");
+		return OR;
 	}
 "!"	{
 		token("!");
+		return '!';
 	}
+
 read |
 boolean |
 while |
@@ -223,16 +248,20 @@ continue |
 break | 
 return	{
 		tokenString("KW", yytext);
+		for(int i = 0; i < yyleng; ++i){
+			buf_trans[i] = toupper(yytext[i]);
+		}
+		return buf_trans;
 	}
 
 0 |
 [1-9][0-9]* {
 		tokenString("integer", yytext);
-		return INT;
+		return INTEGER;
 	}
 [0-9]+\.[0-9]+	{
 		tokenString("float", yytext);
-		return FLOAT;
+		return FLOATCONST;
 	}
 
 ([0-9]+|([0-9]*\.[0-9]+))([eE][-+]?[0-9]+)	{
@@ -285,6 +314,7 @@ return	{
 
 <STR>\"	{
 		tokenString("string", strContent);
+		return STRINGCONST;
 		BEGIN INITIAL;
 		
 	}
