@@ -1749,8 +1749,8 @@ YY_RULE_SETUP
 #line 369 "lex.l"
 {
 		tokenString("string", strContent);
-		return STRINGCONST;
 		BEGIN INITIAL;
+		return STRINGCONST;
 		
 	}
 	YY_BREAK

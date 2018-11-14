@@ -131,54 +131,40 @@ compound_list : var_decl compound_list
 			|
 	;
 
-simple : variable_reference '=' expression SEMICOLON
-	| PRINT variable_reference SEMICOLON
+simple : ID array_expre '=' expression SEMICOLON
 	| PRINT expression SEMICOLON
-	| READ variable_reference
+	| READ ID array_expre
 	;
 
-variable_reference : ID
-				| array_reference
-				;
 
-array_reference : ID array_expre
-			;
-
-array_expre : '[' expression ']' array_expre
-		| '[' expression ']'
+array_expre :  array_expre '[' expression ']'		
+	    |
 		;
 
 expression : expression_component
-		| expression_component operator '(' expression ')'
-		| expression_component operator  expression
+		| expression '-' expression
+		| expression '*' expression
+		| expression '/' expression
+		| expression '%' expression
+		| expression '+' expression
+		| expression AND expression
+		| expression OR expression
+		| expression '<' expression
+		| expression '>' expression
+		| expression LE expression
+		| expression EQ expression
+		| expression GE expression
+		| expression NE expression
 		| '(' expression ')'
 		| '!' expression
-		| '-' expression
+		| '-' expression %prec '*'
 		;
 
 expression_component : literal_const 
-				| ID
+				| ID array_expre
 				| funciton_invocation
-				| array_reference
 				;
 
-operator : '-' 
-		| '*'
-		| '/'
-		| '%'
-		| '+'
-		| logical
-		| AND
-		| OR
-		;
-
-logical : '<'
-		| '>'
-		| LE
-		| EQ
-		| GE
-		| NE
-		;
 
 conditional : IF '(' boolean_expression ')' compound ELSE compound
 		| IF '(' boolean_expression ')' compound
@@ -204,7 +190,7 @@ control_expression : expression
 				|
 				;
 
-increment_expression : expression
+increment_expression : ID '=' expression
 				|
 				;
 

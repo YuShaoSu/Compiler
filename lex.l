@@ -368,8 +368,8 @@ return	{
 
 <STR>\"	{
 		tokenString("string", strContent);
-		return STRINGCONST;
 		BEGIN INITIAL;
+		return STRINGCONST;
 		
 	}
 <STR>[^\\\n\"]	{
