@@ -1,2406 +1,2341 @@
-Terminals which are not used
+   0  $accept : program $end
 
-   BOOLEAN
-   TRUE
-   FALSE
-   LLP
+   1  program : decl_and_def_list
 
+   2  decl_and_def_list : declaration_list decl_and_def_list
+   3                    | definition_list decl_and_def_list_mustdef
 
-State 144 conflicts: 1 reduce/reduce
-State 146 conflicts: 1 reduce/reduce
+   4  decl_and_def_list_mustdef : declaration_list decl_and_def_list_mustdef
+   5                            | definition_list decl_and_def_list_mustdef
+   6                            |
 
+   7  declaration_list : const_decl
+   8                   | var_decl
+   9                   | funct_decl
 
-Grammar
+  10  definition_list : funct_defi
 
-    0 $accept: program $end
+  11  var_decl : scalar_type identifier_list SEMICOLON
 
-    1 program: decl_and_def_list
+  12  scalar_type : INT
+  13              | FLOAT
+  14              | BOOL
+  15              | DOUBLE
+  16              | STRING
 
-    2 decl_and_def_list: declaration_list decl_and_def_list
-    3                  | definition_list decl_and_def_list_mustdef
+  17  identifier : ID
+  18             | ID array_int
 
-    4 decl_and_def_list_mustdef: declaration_list decl_and_def_list_mustdef
-    5                          | definition_list decl_and_def_list_mustdef
-    6                          | /* empty */
+  19  array_int : '[' INTEGER ']'
+  20            | '[' INTEGER ']' array_int
 
-    7 declaration_list: const_decl
-    8                 | var_decl
-    9                 | funct_decl
+  21  identifier_list : identifier_list ',' identifier
+  22                  | identifier
+  23                  | identifier_list ',' ID '=' expression
+  24                  | ID '=' expression
+  25                  | identifier_list ',' ID array_int '=' initial_array
+  26                  | ID array_int '=' initial_array
 
-   10 definition_list: funct_defi
+  27  initial_array : '{' expression_list '}'
 
-   11 var_decl: scalar_type identifier_list SEMICOLON
+  28  const_decl : CONST scalar_type const_list SEMICOLON
 
-   12 scalar_type: INT
-   13            | FLOAT
-   14            | BOOL
-   15            | DOUBLE
-   16            | STRING
+  29  const_list : ID '=' literal_const ',' const_list
+  30             | ID '=' literal_const
 
-   17 identifier: ID
-   18           | ID array_int
+  31  literal_const : INTEGER
+  32                | FLOATCONST
+  33                | STRINGCONST
+  34                | SCIENTIFIC
+  35                | TRUE
+  36                | FALSE
 
-   19 array_int: '[' INTEGER ']'
-   20          | '[' INTEGER ']' array_int
+  37  funct_decl : scalar_type ID '(' arguments ')' SEMICOLON
+  38             | VOID ID '(' arguments ')' SEMICOLON
 
-   21 identifier_list: identifier_list ',' identifier
-   22                | identifier
-   23                | identifier_list ',' ID '=' expression
-   24                | ID '=' expression
-   25                | identifier_list ',' ID array_int '=' initial_array
-   26                | ID array_int '=' initial_array
+  39  funct_defi : scalar_type ID '(' arguments ')' compound
+  40             | VOID ID '(' arguments ')' compound
 
-   27 initial_array: '{' expression_list '}'
+  41  arguments : nonempty_arguments
+  42            |
 
-   28 const_decl: CONST scalar_type const_list SEMICOLON
+  43  nonempty_arguments : nonempty_arguments ',' argument
+  44                     | argument
 
-   29 const_list: ID '=' literal_const ',' const_list
-   30           | ID '=' literal_const
+  45  argument : scalar_type identifier
 
-   31 literal_const: INTEGER
-   32              | FLOATCONST
-   33              | STRINGCONST
-   34              | SCIENTIFIC
+  46  statement : compound
+  47            | simple
+  48            | conditional
+  49            | while
+  50            | for
+  51            | jump
+  52            | procedure_call
 
-   35 funct_decl: scalar_type ID '(' arguments ')' SEMICOLON
-   36           | VOID ID '(' arguments ')' SEMICOLON
+  53  compound : '{' compound_list '}'
 
-   37 funct_defi: scalar_type ID '(' arguments ')' compound
-   38           | VOID ID '(' arguments ')' compound
+  54  compound_list : var_decl compound_list
+  55                | const_decl compound_list
+  56                | statement compound_list
+  57                |
 
-   39 arguments: nonempty_arguments
-   40          | /* empty */
+  58  simple : variable_reference '=' expression SEMICOLON
+  59         | PRINT variable_reference SEMICOLON
+  60         | PRINT expression SEMICOLON
+  61         | READ variable_reference
 
-   41 nonempty_arguments: nonempty_arguments ',' argument
-   42                   | argument
+  62  variable_reference : ID
+  63                     | array_reference
 
-   43 argument: scalar_type identifier
+  64  array_reference : ID array_expre
 
-   44 statement: compound
-   45          | simple
-   46          | conditional
-   47          | while
-   48          | for
-   49          | jump
-   50          | procedure_call
+  65  array_expre : '[' expression ']' array_expre
+  66              | '[' expression ']'
 
-   51 compound: '{' compound_list '}'
+  67  expression : expression_component
+  68             | expression_component operator '(' expression ')'
+  69             | expression_component operator expression
+  70             | '(' expression ')'
+  71             | '!' expression
+  72             | '-' expression
 
-   52 compound_list: var_decl compound_list
-   53              | const_decl compound_list
-   54              | statement compound_list
-   55              | /* empty */
+  73  expression_component : literal_const
+  74                       | ID
+  75                       | funciton_invocation
+  76                       | array_reference
 
-   56 simple: variable_reference '=' expression SEMICOLON
-   57       | PRINT variable_reference SEMICOLON
-   58       | PRINT expression SEMICOLON
-   59       | READ variable_reference
+  77  operator : '-'
+  78           | '*'
+  79           | '/'
+  80           | '%'
+  81           | '+'
+  82           | logical
+  83           | AND
+  84           | OR
 
-   60 variable_reference: ID
-   61                   | array_reference
+  85  logical : '<'
+  86          | '>'
+  87          | LE
+  88          | EQ
+  89          | GE
+  90          | NE
 
-   62 array_reference: ID array_expre
+  91  conditional : IF '(' boolean_expression ')' compound ELSE compound
+  92              | IF '(' boolean_expression ')' compound
 
-   63 array_expre: '[' expression ']' array_expre
-   64            | '[' expression ']'
+  93  while : WHILE '(' boolean_expression ')' compound
+  94        | DO compound WHILE '(' boolean_expression ')' SEMICOLON
 
-   65 expression: expression_component
-   66           | expression_component operator expression
-   67           | '(' expression ')'
-   68           | '!' expression
-   69           | '-' expression
+  95  boolean_expression : expression
 
-   70 expression_component: literal_const
-   71                     | ID
-   72                     | funciton_invocation
-   73                     | array_reference
+  96  for : FOR '(' initial_expression SEMICOLON control_expression SEMICOLON increment_expression ')'
 
-   74 operator: '-'
-   75         | '*'
-   76         | '/'
-   77         | '%'
-   78         | '+'
-   79         | logical
-   80         | AND
-   81         | OR
+  97  initial_expression : ID '=' expression
+  98                     | scalar_type ID '=' expression
+  99                     |
 
-   82 logical: '<'
-   83        | '>'
-   84        | LE
-   85        | EQ
-   86        | GE
-   87        | NE
+ 100  control_expression : expression
+ 101                     |
 
-   88 conditional: IF '(' boolean_expression ')' compound ELSE compound
-   89            | IF '(' boolean_expression ')' compound
+ 102  increment_expression : expression
+ 103                       |
 
-   90 while: WHILE '(' boolean_expression ')' compound
-   91      | DO compound WHILE '(' boolean_expression ')'
+ 104  jump : RETURN expression SEMICOLON
+ 105       | BREAK SEMICOLON
+ 106       | CONTINUE SEMICOLON
 
-   92 boolean_expression: expression
+ 107  procedure_call : funciton_invocation
 
-   93 for: FOR '(' initial_expression SEMICOLON control_expression SEMICOLON increment_expression ')'
+ 108  funciton_invocation : ID '(' expression_list ')' SEMICOLON
 
-   94 initial_expression: ID '=' expression
-   95                   | scalar_type ID '=' expression
-   96                   | /* empty */
-
-   97 control_expression: expression
-   98                   | /* empty */
-
-   99 increment_expression: expression
-  100                     | /* empty */
-
-  101 jump: RETURN expression SEMICOLON
-  102     | BREAK SEMICOLON
-  103     | CONTINUE SEMICOLON
-
-  104 procedure_call: funciton_invocation
-
-  105 funciton_invocation: ID '(' expression_list ')' SEMICOLON
-
-  106 expression_list: expression ',' expression_list
-  107                | expression
-  108                | /* empty */
-
-
-Terminals, with rules where they appear
-
-$end (0) 0
-'!' (33) 68
-'%' (37) 77
-'(' (40) 35 36 37 38 67 88 89 90 91 93 105
-')' (41) 35 36 37 38 67 88 89 90 91 93 105
-'*' (42) 75
-'+' (43) 78
-',' (44) 21 23 25 29 41 106
-'-' (45) 69 74
-'/' (47) 76
-'<' (60) 82
-'=' (61) 23 24 25 26 29 30 56 94 95
-'>' (62) 83
-'[' (91) 19 20 63 64
-']' (93) 19 20 63 64
-'{' (123) 27 51
-'}' (125) 27 51
-error (256)
-SEMICOLON (258) 11 28 35 36 56 57 58 93 101 102 103 105
-ID (259) 17 18 23 24 25 26 29 30 35 36 37 38 60 62 71 94 95 105
-SCIENTIFIC (260) 34
-INTEGER (261) 19 20 31
-FLOATCONST (262) 32
-STRINGCONST (263) 33
-CONST (264) 28
-BOOL (265) 14
-VOID (266) 36 38
-FLOAT (267) 13
-DOUBLE (268) 15
-STRING (269) 16
-INT (270) 12
-READ (271) 59
-PRINT (272) 57 58
-WHILE (273) 90 91
-DO (274) 91
-IF (275) 88 89
-ELSE (276) 88
-FOR (277) 93
-CONTINUE (278) 103
-BREAK (279) 102
-RETURN (280) 101
-BOOLEAN (281)
-TRUE (282)
-FALSE (283)
-LLP (284)
-NE (285) 87
-GE (286) 86
-EQ (287) 85
-LE (288) 84
-AND (289) 80
-OR (290) 81
-
-
-Nonterminals, with rules where they appear
-
-$accept (52)
-    on left: 0
-program (53)
-    on left: 1, on right: 0
-decl_and_def_list (54)
-    on left: 2 3, on right: 1 2
-decl_and_def_list_mustdef (55)
-    on left: 4 5 6, on right: 3 4 5
-declaration_list (56)
-    on left: 7 8 9, on right: 2 4
-definition_list (57)
-    on left: 10, on right: 3 5
-var_decl (58)
-    on left: 11, on right: 8 52
-scalar_type (59)
-    on left: 12 13 14 15 16, on right: 11 28 35 37 43 95
-identifier (60)
-    on left: 17 18, on right: 21 22 43
-array_int (61)
-    on left: 19 20, on right: 18 20 25 26
-identifier_list (62)
-    on left: 21 22 23 24 25 26, on right: 11 21 23 25
-initial_array (63)
-    on left: 27, on right: 25 26
-const_decl (64)
-    on left: 28, on right: 7 53
-const_list (65)
-    on left: 29 30, on right: 28 29
-literal_const (66)
-    on left: 31 32 33 34, on right: 29 30 70
-funct_decl (67)
-    on left: 35 36, on right: 9
-funct_defi (68)
-    on left: 37 38, on right: 10
-arguments (69)
-    on left: 39 40, on right: 35 36 37 38
-nonempty_arguments (70)
-    on left: 41 42, on right: 39 41
-argument (71)
-    on left: 43, on right: 41 42
-statement (72)
-    on left: 44 45 46 47 48 49 50, on right: 54
-compound (73)
-    on left: 51, on right: 37 38 44 88 89 90 91
-compound_list (74)
-    on left: 52 53 54 55, on right: 51 52 53 54
-simple (75)
-    on left: 56 57 58 59, on right: 45
-variable_reference (76)
-    on left: 60 61, on right: 56 57 59
-array_reference (77)
-    on left: 62, on right: 61 73
-array_expre (78)
-    on left: 63 64, on right: 62 63
-expression (79)
-    on left: 65 66 67 68 69, on right: 23 24 56 58 63 64 66 67 68 69
-    92 94 95 97 99 101 106 107
-expression_component (80)
-    on left: 70 71 72 73, on right: 65 66
-operator (81)
-    on left: 74 75 76 77 78 79 80 81, on right: 66
-logical (82)
-    on left: 82 83 84 85 86 87, on right: 79
-conditional (83)
-    on left: 88 89, on right: 46
-while (84)
-    on left: 90 91, on right: 47
-boolean_expression (85)
-    on left: 92, on right: 88 89 90 91
-for (86)
-    on left: 93, on right: 48
-initial_expression (87)
-    on left: 94 95 96, on right: 93
-control_expression (88)
-    on left: 97 98, on right: 93
-increment_expression (89)
-    on left: 99 100, on right: 93
-jump (90)
-    on left: 101 102 103, on right: 49
-procedure_call (91)
-    on left: 104, on right: 50
-funciton_invocation (92)
-    on left: 105, on right: 72 104
-expression_list (93)
-    on left: 106 107 108, on right: 27 105 106
-
-
+ 109  expression_list : expression ',' expression_list
+ 110                  | expression
+ 111                  |
+
 state 0
+	$accept : . program $end  (0)
 
-    0 $accept: . program $end
+	CONST  shift 1
+	BOOL  shift 2
+	VOID  shift 3
+	FLOAT  shift 4
+	DOUBLE  shift 5
+	STRING  shift 6
+	INT  shift 7
+	.  error
 
-    CONST   shift, and go to state 1
-    BOOL    shift, and go to state 2
-    VOID    shift, and go to state 3
-    FLOAT   shift, and go to state 4
-    DOUBLE  shift, and go to state 5
-    STRING  shift, and go to state 6
-    INT     shift, and go to state 7
-
-    program            go to state 8
-    decl_and_def_list  go to state 9
-    declaration_list   go to state 10
-    definition_list    go to state 11
-    var_decl           go to state 12
-    scalar_type        go to state 13
-    const_decl         go to state 14
-    funct_decl         go to state 15
-    funct_defi         go to state 16
+	program  goto 8
+	decl_and_def_list  goto 9
+	declaration_list  goto 10
+	definition_list  goto 11
+	const_decl  goto 12
+	var_decl  goto 13
+	funct_decl  goto 14
+	funct_defi  goto 15
+	scalar_type  goto 16
 
 
 state 1
+	const_decl : CONST . scalar_type const_list SEMICOLON  (28)
 
-   28 const_decl: CONST . scalar_type const_list SEMICOLON
+	BOOL  shift 2
+	FLOAT  shift 4
+	DOUBLE  shift 5
+	STRING  shift 6
+	INT  shift 7
+	.  error
 
-    BOOL    shift, and go to state 2
-    FLOAT   shift, and go to state 4
-    DOUBLE  shift, and go to state 5
-    STRING  shift, and go to state 6
-    INT     shift, and go to state 7
-
-    scalar_type  go to state 17
+	scalar_type  goto 17
 
 
 state 2
+	scalar_type : BOOL .  (14)
 
-   14 scalar_type: BOOL .
-
-    $default  reduce using rule 14 (scalar_type)
+	.  reduce 14
 
 
 state 3
+	funct_decl : VOID . ID '(' arguments ')' SEMICOLON  (38)
+	funct_defi : VOID . ID '(' arguments ')' compound  (40)
 
-   36 funct_decl: VOID . ID '(' arguments ')' SEMICOLON
-   38 funct_defi: VOID . ID '(' arguments ')' compound
-
-    ID  shift, and go to state 18
+	ID  shift 18
+	.  error
 
 
 state 4
+	scalar_type : FLOAT .  (13)
 
-   13 scalar_type: FLOAT .
-
-    $default  reduce using rule 13 (scalar_type)
+	.  reduce 13
 
 
 state 5
+	scalar_type : DOUBLE .  (15)
 
-   15 scalar_type: DOUBLE .
-
-    $default  reduce using rule 15 (scalar_type)
+	.  reduce 15
 
 
 state 6
+	scalar_type : STRING .  (16)
 
-   16 scalar_type: STRING .
-
-    $default  reduce using rule 16 (scalar_type)
+	.  reduce 16
 
 
 state 7
+	scalar_type : INT .  (12)
 
-   12 scalar_type: INT .
-
-    $default  reduce using rule 12 (scalar_type)
+	.  reduce 12
 
 
 state 8
+	$accept : program . $end  (0)
 
-    0 $accept: program . $end
-
-    $end  shift, and go to state 19
+	$end  accept
 
 
 state 9
+	program : decl_and_def_list .  (1)
 
-    1 program: decl_and_def_list .
-
-    $default  reduce using rule 1 (program)
+	.  reduce 1
 
 
 state 10
+	decl_and_def_list : declaration_list . decl_and_def_list  (2)
 
-    2 decl_and_def_list: declaration_list . decl_and_def_list
+	CONST  shift 1
+	BOOL  shift 2
+	VOID  shift 3
+	FLOAT  shift 4
+	DOUBLE  shift 5
+	STRING  shift 6
+	INT  shift 7
+	.  error
 
-    CONST   shift, and go to state 1
-    BOOL    shift, and go to state 2
-    VOID    shift, and go to state 3
-    FLOAT   shift, and go to state 4
-    DOUBLE  shift, and go to state 5
-    STRING  shift, and go to state 6
-    INT     shift, and go to state 7
-
-    decl_and_def_list  go to state 20
-    declaration_list   go to state 10
-    definition_list    go to state 11
-    var_decl           go to state 12
-    scalar_type        go to state 13
-    const_decl         go to state 14
-    funct_decl         go to state 15
-    funct_defi         go to state 16
+	decl_and_def_list  goto 19
+	declaration_list  goto 10
+	definition_list  goto 11
+	const_decl  goto 12
+	var_decl  goto 13
+	funct_decl  goto 14
+	funct_defi  goto 15
+	scalar_type  goto 16
 
 
 state 11
+	decl_and_def_list : definition_list . decl_and_def_list_mustdef  (3)
+	decl_and_def_list_mustdef : .  (6)
 
-    3 decl_and_def_list: definition_list . decl_and_def_list_mustdef
+	CONST  shift 1
+	BOOL  shift 2
+	VOID  shift 3
+	FLOAT  shift 4
+	DOUBLE  shift 5
+	STRING  shift 6
+	INT  shift 7
+	$end  reduce 6
 
-    CONST   shift, and go to state 1
-    BOOL    shift, and go to state 2
-    VOID    shift, and go to state 3
-    FLOAT   shift, and go to state 4
-    DOUBLE  shift, and go to state 5
-    STRING  shift, and go to state 6
-    INT     shift, and go to state 7
-
-    $default  reduce using rule 6 (decl_and_def_list_mustdef)
-
-    decl_and_def_list_mustdef  go to state 21
-    declaration_list           go to state 22
-    definition_list            go to state 23
-    var_decl                   go to state 12
-    scalar_type                go to state 13
-    const_decl                 go to state 14
-    funct_decl                 go to state 15
-    funct_defi                 go to state 16
+	declaration_list  goto 20
+	definition_list  goto 21
+	decl_and_def_list_mustdef  goto 22
+	const_decl  goto 12
+	var_decl  goto 13
+	funct_decl  goto 14
+	funct_defi  goto 15
+	scalar_type  goto 16
 
 
 state 12
+	declaration_list : const_decl .  (7)
 
-    8 declaration_list: var_decl .
-
-    $default  reduce using rule 8 (declaration_list)
+	.  reduce 7
 
 
 state 13
+	declaration_list : var_decl .  (8)
 
-   11 var_decl: scalar_type . identifier_list SEMICOLON
-   35 funct_decl: scalar_type . ID '(' arguments ')' SEMICOLON
-   37 funct_defi: scalar_type . ID '(' arguments ')' compound
-
-    ID  shift, and go to state 24
-
-    identifier       go to state 25
-    identifier_list  go to state 26
+	.  reduce 8
 
 
 state 14
+	declaration_list : funct_decl .  (9)
 
-    7 declaration_list: const_decl .
-
-    $default  reduce using rule 7 (declaration_list)
+	.  reduce 9
 
 
 state 15
+	definition_list : funct_defi .  (10)
 
-    9 declaration_list: funct_decl .
-
-    $default  reduce using rule 9 (declaration_list)
+	.  reduce 10
 
 
 state 16
+	var_decl : scalar_type . identifier_list SEMICOLON  (11)
+	funct_decl : scalar_type . ID '(' arguments ')' SEMICOLON  (37)
+	funct_defi : scalar_type . ID '(' arguments ')' compound  (39)
 
-   10 definition_list: funct_defi .
+	ID  shift 23
+	.  error
 
-    $default  reduce using rule 10 (definition_list)
+	identifier_list  goto 24
+	identifier  goto 25
 
 
 state 17
+	const_decl : CONST scalar_type . const_list SEMICOLON  (28)
 
-   28 const_decl: CONST scalar_type . const_list SEMICOLON
+	ID  shift 26
+	.  error
 
-    ID  shift, and go to state 27
-
-    const_list  go to state 28
+	const_list  goto 27
 
 
 state 18
+	funct_decl : VOID ID . '(' arguments ')' SEMICOLON  (38)
+	funct_defi : VOID ID . '(' arguments ')' compound  (40)
 
-   36 funct_decl: VOID ID . '(' arguments ')' SEMICOLON
-   38 funct_defi: VOID ID . '(' arguments ')' compound
-
-    '('  shift, and go to state 29
+	'('  shift 28
+	.  error
 
 
 state 19
+	decl_and_def_list : declaration_list decl_and_def_list .  (2)
 
-    0 $accept: program $end .
-
-    $default  accept
+	.  reduce 2
 
 
 state 20
+	decl_and_def_list_mustdef : declaration_list . decl_and_def_list_mustdef  (4)
+	decl_and_def_list_mustdef : .  (6)
 
-    2 decl_and_def_list: declaration_list decl_and_def_list .
+	CONST  shift 1
+	BOOL  shift 2
+	VOID  shift 3
+	FLOAT  shift 4
+	DOUBLE  shift 5
+	STRING  shift 6
+	INT  shift 7
+	$end  reduce 6
 
-    $default  reduce using rule 2 (decl_and_def_list)
+	declaration_list  goto 20
+	definition_list  goto 21
+	decl_and_def_list_mustdef  goto 29
+	const_decl  goto 12
+	var_decl  goto 13
+	funct_decl  goto 14
+	funct_defi  goto 15
+	scalar_type  goto 16
 
 
 state 21
+	decl_and_def_list_mustdef : definition_list . decl_and_def_list_mustdef  (5)
+	decl_and_def_list_mustdef : .  (6)
 
-    3 decl_and_def_list: definition_list decl_and_def_list_mustdef .
+	CONST  shift 1
+	BOOL  shift 2
+	VOID  shift 3
+	FLOAT  shift 4
+	DOUBLE  shift 5
+	STRING  shift 6
+	INT  shift 7
+	$end  reduce 6
 
-    $default  reduce using rule 3 (decl_and_def_list)
+	declaration_list  goto 20
+	definition_list  goto 21
+	decl_and_def_list_mustdef  goto 30
+	const_decl  goto 12
+	var_decl  goto 13
+	funct_decl  goto 14
+	funct_defi  goto 15
+	scalar_type  goto 16
 
 
 state 22
+	decl_and_def_list : definition_list decl_and_def_list_mustdef .  (3)
 
-    4 decl_and_def_list_mustdef: declaration_list . decl_and_def_list_mustdef
-
-    CONST   shift, and go to state 1
-    BOOL    shift, and go to state 2
-    VOID    shift, and go to state 3
-    FLOAT   shift, and go to state 4
-    DOUBLE  shift, and go to state 5
-    STRING  shift, and go to state 6
-    INT     shift, and go to state 7
-
-    $default  reduce using rule 6 (decl_and_def_list_mustdef)
-
-    decl_and_def_list_mustdef  go to state 30
-    declaration_list           go to state 22
-    definition_list            go to state 23
-    var_decl                   go to state 12
-    scalar_type                go to state 13
-    const_decl                 go to state 14
-    funct_decl                 go to state 15
-    funct_defi                 go to state 16
+	.  reduce 3
 
 
 state 23
+	identifier : ID .  (17)
+	identifier : ID . array_int  (18)
+	identifier_list : ID . '=' expression  (24)
+	identifier_list : ID . array_int '=' initial_array  (26)
+	funct_decl : scalar_type ID . '(' arguments ')' SEMICOLON  (37)
+	funct_defi : scalar_type ID . '(' arguments ')' compound  (39)
 
-    5 decl_and_def_list_mustdef: definition_list . decl_and_def_list_mustdef
+	'['  shift 31
+	'='  shift 32
+	'('  shift 33
+	SEMICOLON  reduce 17
+	','  reduce 17
 
-    CONST   shift, and go to state 1
-    BOOL    shift, and go to state 2
-    VOID    shift, and go to state 3
-    FLOAT   shift, and go to state 4
-    DOUBLE  shift, and go to state 5
-    STRING  shift, and go to state 6
-    INT     shift, and go to state 7
-
-    $default  reduce using rule 6 (decl_and_def_list_mustdef)
-
-    decl_and_def_list_mustdef  go to state 31
-    declaration_list           go to state 22
-    definition_list            go to state 23
-    var_decl                   go to state 12
-    scalar_type                go to state 13
-    const_decl                 go to state 14
-    funct_decl                 go to state 15
-    funct_defi                 go to state 16
+	array_int  goto 34
 
 
 state 24
+	var_decl : scalar_type identifier_list . SEMICOLON  (11)
+	identifier_list : identifier_list . ',' identifier  (21)
+	identifier_list : identifier_list . ',' ID '=' expression  (23)
+	identifier_list : identifier_list . ',' ID array_int '=' initial_array  (25)
 
-   17 identifier: ID .
-   18           | ID . array_int
-   24 identifier_list: ID . '=' expression
-   26                | ID . array_int '=' initial_array
-   35 funct_decl: scalar_type ID . '(' arguments ')' SEMICOLON
-   37 funct_defi: scalar_type ID . '(' arguments ')' compound
-
-    '['  shift, and go to state 32
-    '='  shift, and go to state 33
-    '('  shift, and go to state 34
-
-    $default  reduce using rule 17 (identifier)
-
-    array_int  go to state 35
+	SEMICOLON  shift 35
+	','  shift 36
+	.  error
 
 
 state 25
+	identifier_list : identifier .  (22)
 
-   22 identifier_list: identifier .
-
-    $default  reduce using rule 22 (identifier_list)
+	.  reduce 22
 
 
 state 26
+	const_list : ID . '=' literal_const ',' const_list  (29)
+	const_list : ID . '=' literal_const  (30)
 
-   11 var_decl: scalar_type identifier_list . SEMICOLON
-   21 identifier_list: identifier_list . ',' identifier
-   23                | identifier_list . ',' ID '=' expression
-   25                | identifier_list . ',' ID array_int '=' initial_array
-
-    SEMICOLON  shift, and go to state 36
-    ','        shift, and go to state 37
+	'='  shift 37
+	.  error
 
 
 state 27
+	const_decl : CONST scalar_type const_list . SEMICOLON  (28)
 
-   29 const_list: ID . '=' literal_const ',' const_list
-   30           | ID . '=' literal_const
-
-    '='  shift, and go to state 38
+	SEMICOLON  shift 38
+	.  error
 
 
 state 28
+	funct_decl : VOID ID '(' . arguments ')' SEMICOLON  (38)
+	funct_defi : VOID ID '(' . arguments ')' compound  (40)
+	arguments : .  (42)
 
-   28 const_decl: CONST scalar_type const_list . SEMICOLON
+	BOOL  shift 2
+	FLOAT  shift 4
+	DOUBLE  shift 5
+	STRING  shift 6
+	INT  shift 7
+	')'  reduce 42
 
-    SEMICOLON  shift, and go to state 39
+	scalar_type  goto 39
+	arguments  goto 40
+	nonempty_arguments  goto 41
+	argument  goto 42
 
 
 state 29
+	decl_and_def_list_mustdef : declaration_list decl_and_def_list_mustdef .  (4)
 
-   36 funct_decl: VOID ID '(' . arguments ')' SEMICOLON
-   38 funct_defi: VOID ID '(' . arguments ')' compound
-
-    BOOL    shift, and go to state 2
-    FLOAT   shift, and go to state 4
-    DOUBLE  shift, and go to state 5
-    STRING  shift, and go to state 6
-    INT     shift, and go to state 7
-
-    $default  reduce using rule 40 (arguments)
-
-    scalar_type         go to state 40
-    arguments           go to state 41
-    nonempty_arguments  go to state 42
-    argument            go to state 43
+	.  reduce 4
 
 
 state 30
+	decl_and_def_list_mustdef : definition_list decl_and_def_list_mustdef .  (5)
 
-    4 decl_and_def_list_mustdef: declaration_list decl_and_def_list_mustdef .
-
-    $default  reduce using rule 4 (decl_and_def_list_mustdef)
+	.  reduce 5
 
 
 state 31
+	array_int : '[' . INTEGER ']'  (19)
+	array_int : '[' . INTEGER ']' array_int  (20)
 
-    5 decl_and_def_list_mustdef: definition_list decl_and_def_list_mustdef .
-
-    $default  reduce using rule 5 (decl_and_def_list_mustdef)
+	INTEGER  shift 43
+	.  error
 
 
 state 32
+	identifier_list : ID '=' . expression  (24)
 
-   19 array_int: '[' . INTEGER ']'
-   20          | '[' . INTEGER ']' array_int
+	ID  shift 44
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 53
+	.  error
 
-    INTEGER  shift, and go to state 44
+	expression  goto 54
+	literal_const  goto 55
+	array_reference  goto 56
+	expression_component  goto 57
+	funciton_invocation  goto 58
 
 
 state 33
+	funct_decl : scalar_type ID '(' . arguments ')' SEMICOLON  (37)
+	funct_defi : scalar_type ID '(' . arguments ')' compound  (39)
+	arguments : .  (42)
 
-   24 identifier_list: ID '=' . expression
+	BOOL  shift 2
+	FLOAT  shift 4
+	DOUBLE  shift 5
+	STRING  shift 6
+	INT  shift 7
+	')'  reduce 42
 
-    ID           shift, and go to state 45
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-    '-'          shift, and go to state 50
-    '!'          shift, and go to state 51
-    '('          shift, and go to state 52
-
-    literal_const         go to state 53
-    array_reference       go to state 54
-    expression            go to state 55
-    expression_component  go to state 56
-    funciton_invocation   go to state 57
+	scalar_type  goto 39
+	arguments  goto 59
+	nonempty_arguments  goto 41
+	argument  goto 42
 
 
 state 34
+	identifier : ID array_int .  (18)
+	identifier_list : ID array_int . '=' initial_array  (26)
 
-   35 funct_decl: scalar_type ID '(' . arguments ')' SEMICOLON
-   37 funct_defi: scalar_type ID '(' . arguments ')' compound
-
-    BOOL    shift, and go to state 2
-    FLOAT   shift, and go to state 4
-    DOUBLE  shift, and go to state 5
-    STRING  shift, and go to state 6
-    INT     shift, and go to state 7
-
-    $default  reduce using rule 40 (arguments)
-
-    scalar_type         go to state 40
-    arguments           go to state 58
-    nonempty_arguments  go to state 42
-    argument            go to state 43
+	'='  shift 60
+	SEMICOLON  reduce 18
+	','  reduce 18
 
 
 state 35
+	var_decl : scalar_type identifier_list SEMICOLON .  (11)
 
-   18 identifier: ID array_int .
-   26 identifier_list: ID array_int . '=' initial_array
-
-    '='  shift, and go to state 59
-
-    $default  reduce using rule 18 (identifier)
+	.  reduce 11
 
 
 state 36
+	identifier_list : identifier_list ',' . identifier  (21)
+	identifier_list : identifier_list ',' . ID '=' expression  (23)
+	identifier_list : identifier_list ',' . ID array_int '=' initial_array  (25)
 
-   11 var_decl: scalar_type identifier_list SEMICOLON .
+	ID  shift 61
+	.  error
 
-    $default  reduce using rule 11 (var_decl)
+	identifier  goto 62
 
 
 state 37
+	const_list : ID '=' . literal_const ',' const_list  (29)
+	const_list : ID '=' . literal_const  (30)
 
-   21 identifier_list: identifier_list ',' . identifier
-   23                | identifier_list ',' . ID '=' expression
-   25                | identifier_list ',' . ID array_int '=' initial_array
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	.  error
 
-    ID  shift, and go to state 60
-
-    identifier  go to state 61
+	literal_const  goto 63
 
 
 state 38
+	const_decl : CONST scalar_type const_list SEMICOLON .  (28)
 
-   29 const_list: ID '=' . literal_const ',' const_list
-   30           | ID '=' . literal_const
-
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-
-    literal_const  go to state 62
+	.  reduce 28
 
 
 state 39
+	argument : scalar_type . identifier  (45)
 
-   28 const_decl: CONST scalar_type const_list SEMICOLON .
+	ID  shift 64
+	.  error
 
-    $default  reduce using rule 28 (const_decl)
+	identifier  goto 65
 
 
 state 40
+	funct_decl : VOID ID '(' arguments . ')' SEMICOLON  (38)
+	funct_defi : VOID ID '(' arguments . ')' compound  (40)
 
-   43 argument: scalar_type . identifier
-
-    ID  shift, and go to state 63
-
-    identifier  go to state 64
+	')'  shift 66
+	.  error
 
 
 state 41
+	arguments : nonempty_arguments .  (41)
+	nonempty_arguments : nonempty_arguments . ',' argument  (43)
 
-   36 funct_decl: VOID ID '(' arguments . ')' SEMICOLON
-   38 funct_defi: VOID ID '(' arguments . ')' compound
-
-    ')'  shift, and go to state 65
+	','  shift 67
+	')'  reduce 41
 
 
 state 42
+	nonempty_arguments : argument .  (44)
 
-   39 arguments: nonempty_arguments .
-   41 nonempty_arguments: nonempty_arguments . ',' argument
-
-    ','  shift, and go to state 66
-
-    $default  reduce using rule 39 (arguments)
+	.  reduce 44
 
 
 state 43
+	array_int : '[' INTEGER . ']'  (19)
+	array_int : '[' INTEGER . ']' array_int  (20)
 
-   42 nonempty_arguments: argument .
-
-    $default  reduce using rule 42 (nonempty_arguments)
+	']'  shift 68
+	.  error
 
 
 state 44
+	array_reference : ID . array_expre  (64)
+	expression_component : ID .  (74)
+	funciton_invocation : ID . '(' expression_list ')' SEMICOLON  (108)
 
-   19 array_int: '[' INTEGER . ']'
-   20          | '[' INTEGER . ']' array_int
+	'['  shift 69
+	'('  shift 70
+	SEMICOLON  reduce 74
+	'*'  reduce 74
+	'/'  reduce 74
+	'%'  reduce 74
+	'+'  reduce 74
+	'-'  reduce 74
+	'<'  reduce 74
+	'>'  reduce 74
+	LE  reduce 74
+	EQ  reduce 74
+	GE  reduce 74
+	NE  reduce 74
+	AND  reduce 74
+	OR  reduce 74
+	']'  reduce 74
+	','  reduce 74
+	'}'  reduce 74
+	')'  reduce 74
 
-    ']'  shift, and go to state 67
+	array_expre  goto 71
 
 
 state 45
+	literal_const : SCIENTIFIC .  (34)
 
-   62 array_reference: ID . array_expre
-   71 expression_component: ID .
-  105 funciton_invocation: ID . '(' expression_list ')' SEMICOLON
-
-    '['  shift, and go to state 68
-    '('  shift, and go to state 69
-
-    $default  reduce using rule 71 (expression_component)
-
-    array_expre  go to state 70
+	.  reduce 34
 
 
 state 46
+	literal_const : INTEGER .  (31)
 
-   34 literal_const: SCIENTIFIC .
-
-    $default  reduce using rule 34 (literal_const)
+	.  reduce 31
 
 
 state 47
+	literal_const : FLOATCONST .  (32)
 
-   31 literal_const: INTEGER .
-
-    $default  reduce using rule 31 (literal_const)
+	.  reduce 32
 
 
 state 48
+	literal_const : STRINGCONST .  (33)
 
-   32 literal_const: FLOATCONST .
-
-    $default  reduce using rule 32 (literal_const)
+	.  reduce 33
 
 
 state 49
+	literal_const : TRUE .  (35)
 
-   33 literal_const: STRINGCONST .
-
-    $default  reduce using rule 33 (literal_const)
+	.  reduce 35
 
 
 state 50
+	literal_const : FALSE .  (36)
 
-   69 expression: '-' . expression
-
-    ID           shift, and go to state 45
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-    '-'          shift, and go to state 50
-    '!'          shift, and go to state 51
-    '('          shift, and go to state 52
-
-    literal_const         go to state 53
-    array_reference       go to state 54
-    expression            go to state 71
-    expression_component  go to state 56
-    funciton_invocation   go to state 57
+	.  reduce 36
 
 
 state 51
+	expression : '-' . expression  (72)
 
-   68 expression: '!' . expression
+	ID  shift 44
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 53
+	.  error
 
-    ID           shift, and go to state 45
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-    '-'          shift, and go to state 50
-    '!'          shift, and go to state 51
-    '('          shift, and go to state 52
-
-    literal_const         go to state 53
-    array_reference       go to state 54
-    expression            go to state 72
-    expression_component  go to state 56
-    funciton_invocation   go to state 57
+	expression  goto 72
+	literal_const  goto 55
+	array_reference  goto 56
+	expression_component  goto 57
+	funciton_invocation  goto 58
 
 
 state 52
+	expression : '!' . expression  (71)
 
-   67 expression: '(' . expression ')'
+	ID  shift 44
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 53
+	.  error
 
-    ID           shift, and go to state 45
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-    '-'          shift, and go to state 50
-    '!'          shift, and go to state 51
-    '('          shift, and go to state 52
-
-    literal_const         go to state 53
-    array_reference       go to state 54
-    expression            go to state 73
-    expression_component  go to state 56
-    funciton_invocation   go to state 57
+	expression  goto 73
+	literal_const  goto 55
+	array_reference  goto 56
+	expression_component  goto 57
+	funciton_invocation  goto 58
 
 
 state 53
+	expression : '(' . expression ')'  (70)
 
-   70 expression_component: literal_const .
+	ID  shift 44
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 53
+	.  error
 
-    $default  reduce using rule 70 (expression_component)
+	expression  goto 74
+	literal_const  goto 55
+	array_reference  goto 56
+	expression_component  goto 57
+	funciton_invocation  goto 58
 
 
 state 54
+	identifier_list : ID '=' expression .  (24)
 
-   73 expression_component: array_reference .
-
-    $default  reduce using rule 73 (expression_component)
+	.  reduce 24
 
 
 state 55
+	expression_component : literal_const .  (73)
 
-   24 identifier_list: ID '=' expression .
-
-    $default  reduce using rule 24 (identifier_list)
+	.  reduce 73
 
 
 state 56
+	expression_component : array_reference .  (76)
 
-   65 expression: expression_component .
-   66           | expression_component . operator expression
-
-    '*'  shift, and go to state 74
-    '/'  shift, and go to state 75
-    '%'  shift, and go to state 76
-    '+'  shift, and go to state 77
-    '-'  shift, and go to state 78
-    '<'  shift, and go to state 79
-    '>'  shift, and go to state 80
-    NE   shift, and go to state 81
-    GE   shift, and go to state 82
-    EQ   shift, and go to state 83
-    LE   shift, and go to state 84
-    AND  shift, and go to state 85
-    OR   shift, and go to state 86
-
-    $default  reduce using rule 65 (expression)
-
-    operator  go to state 87
-    logical   go to state 88
+	.  reduce 76
 
 
 state 57
+	expression : expression_component .  (67)
+	expression : expression_component . operator '(' expression ')'  (68)
+	expression : expression_component . operator expression  (69)
 
-   72 expression_component: funciton_invocation .
+	'*'  shift 75
+	'/'  shift 76
+	'%'  shift 77
+	'+'  shift 78
+	'-'  shift 79
+	'<'  shift 80
+	'>'  shift 81
+	LE  shift 82
+	EQ  shift 83
+	GE  shift 84
+	NE  shift 85
+	AND  shift 86
+	OR  shift 87
+	SEMICOLON  reduce 67
+	']'  reduce 67
+	','  reduce 67
+	'}'  reduce 67
+	')'  reduce 67
 
-    $default  reduce using rule 72 (expression_component)
+	operator  goto 88
+	logical  goto 89
 
 
 state 58
+	expression_component : funciton_invocation .  (75)
 
-   35 funct_decl: scalar_type ID '(' arguments . ')' SEMICOLON
-   37 funct_defi: scalar_type ID '(' arguments . ')' compound
-
-    ')'  shift, and go to state 89
+	.  reduce 75
 
 
 state 59
+	funct_decl : scalar_type ID '(' arguments . ')' SEMICOLON  (37)
+	funct_defi : scalar_type ID '(' arguments . ')' compound  (39)
 
-   26 identifier_list: ID array_int '=' . initial_array
-
-    '{'  shift, and go to state 90
-
-    initial_array  go to state 91
+	')'  shift 90
+	.  error
 
 
 state 60
+	identifier_list : ID array_int '=' . initial_array  (26)
 
-   17 identifier: ID .
-   18           | ID . array_int
-   23 identifier_list: identifier_list ',' ID . '=' expression
-   25                | identifier_list ',' ID . array_int '=' initial_array
+	'{'  shift 91
+	.  error
 
-    '['  shift, and go to state 32
-    '='  shift, and go to state 92
-
-    $default  reduce using rule 17 (identifier)
-
-    array_int  go to state 93
+	initial_array  goto 92
 
 
 state 61
+	identifier : ID .  (17)
+	identifier : ID . array_int  (18)
+	identifier_list : identifier_list ',' ID . '=' expression  (23)
+	identifier_list : identifier_list ',' ID . array_int '=' initial_array  (25)
 
-   21 identifier_list: identifier_list ',' identifier .
+	'['  shift 31
+	'='  shift 93
+	SEMICOLON  reduce 17
+	','  reduce 17
 
-    $default  reduce using rule 21 (identifier_list)
+	array_int  goto 94
 
 
 state 62
+	identifier_list : identifier_list ',' identifier .  (21)
 
-   29 const_list: ID '=' literal_const . ',' const_list
-   30           | ID '=' literal_const .
-
-    ','  shift, and go to state 94
-
-    $default  reduce using rule 30 (const_list)
+	.  reduce 21
 
 
 state 63
+	const_list : ID '=' literal_const . ',' const_list  (29)
+	const_list : ID '=' literal_const .  (30)
 
-   17 identifier: ID .
-   18           | ID . array_int
-
-    '['  shift, and go to state 32
-
-    $default  reduce using rule 17 (identifier)
-
-    array_int  go to state 95
+	','  shift 95
+	SEMICOLON  reduce 30
 
 
 state 64
+	identifier : ID .  (17)
+	identifier : ID . array_int  (18)
 
-   43 argument: scalar_type identifier .
+	'['  shift 31
+	','  reduce 17
+	')'  reduce 17
 
-    $default  reduce using rule 43 (argument)
+	array_int  goto 96
 
 
 state 65
+	argument : scalar_type identifier .  (45)
 
-   36 funct_decl: VOID ID '(' arguments ')' . SEMICOLON
-   38 funct_defi: VOID ID '(' arguments ')' . compound
-
-    SEMICOLON  shift, and go to state 96
-    '{'        shift, and go to state 97
-
-    compound  go to state 98
+	.  reduce 45
 
 
 state 66
+	funct_decl : VOID ID '(' arguments ')' . SEMICOLON  (38)
+	funct_defi : VOID ID '(' arguments ')' . compound  (40)
 
-   41 nonempty_arguments: nonempty_arguments ',' . argument
+	SEMICOLON  shift 97
+	'{'  shift 98
+	.  error
 
-    BOOL    shift, and go to state 2
-    FLOAT   shift, and go to state 4
-    DOUBLE  shift, and go to state 5
-    STRING  shift, and go to state 6
-    INT     shift, and go to state 7
-
-    scalar_type  go to state 40
-    argument     go to state 99
+	compound  goto 99
 
 
 state 67
+	nonempty_arguments : nonempty_arguments ',' . argument  (43)
 
-   19 array_int: '[' INTEGER ']' .
-   20          | '[' INTEGER ']' . array_int
+	BOOL  shift 2
+	FLOAT  shift 4
+	DOUBLE  shift 5
+	STRING  shift 6
+	INT  shift 7
+	.  error
 
-    '['  shift, and go to state 32
-
-    $default  reduce using rule 19 (array_int)
-
-    array_int  go to state 100
+	scalar_type  goto 39
+	argument  goto 100
 
 
 state 68
+	array_int : '[' INTEGER ']' .  (19)
+	array_int : '[' INTEGER ']' . array_int  (20)
 
-   63 array_expre: '[' . expression ']' array_expre
-   64            | '[' . expression ']'
+	'['  shift 31
+	SEMICOLON  reduce 19
+	','  reduce 19
+	'='  reduce 19
+	')'  reduce 19
 
-    ID           shift, and go to state 45
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-    '-'          shift, and go to state 50
-    '!'          shift, and go to state 51
-    '('          shift, and go to state 52
-
-    literal_const         go to state 53
-    array_reference       go to state 54
-    expression            go to state 101
-    expression_component  go to state 56
-    funciton_invocation   go to state 57
+	array_int  goto 101
 
 
 state 69
+	array_expre : '[' . expression ']' array_expre  (65)
+	array_expre : '[' . expression ']'  (66)
 
-  105 funciton_invocation: ID '(' . expression_list ')' SEMICOLON
+	ID  shift 44
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 53
+	.  error
 
-    ID           shift, and go to state 45
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-    '-'          shift, and go to state 50
-    '!'          shift, and go to state 51
-    '('          shift, and go to state 52
-
-    $default  reduce using rule 108 (expression_list)
-
-    literal_const         go to state 53
-    array_reference       go to state 54
-    expression            go to state 102
-    expression_component  go to state 56
-    funciton_invocation   go to state 57
-    expression_list       go to state 103
+	expression  goto 102
+	literal_const  goto 55
+	array_reference  goto 56
+	expression_component  goto 57
+	funciton_invocation  goto 58
 
 
 state 70
+	funciton_invocation : ID '(' . expression_list ')' SEMICOLON  (108)
+	expression_list : .  (111)
 
-   62 array_reference: ID array_expre .
+	ID  shift 44
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 53
+	')'  reduce 111
 
-    $default  reduce using rule 62 (array_reference)
+	expression  goto 103
+	expression_list  goto 104
+	literal_const  goto 55
+	array_reference  goto 56
+	expression_component  goto 57
+	funciton_invocation  goto 58
 
 
 state 71
+	array_reference : ID array_expre .  (64)
 
-   69 expression: '-' expression .
-
-    $default  reduce using rule 69 (expression)
+	.  reduce 64
 
 
 state 72
+	expression : '-' expression .  (72)
 
-   68 expression: '!' expression .
-
-    $default  reduce using rule 68 (expression)
+	.  reduce 72
 
 
 state 73
+	expression : '!' expression .  (71)
 
-   67 expression: '(' expression . ')'
-
-    ')'  shift, and go to state 104
+	.  reduce 71
 
 
 state 74
+	expression : '(' expression . ')'  (70)
 
-   75 operator: '*' .
-
-    $default  reduce using rule 75 (operator)
+	')'  shift 105
+	.  error
 
 
 state 75
+	operator : '*' .  (78)
 
-   76 operator: '/' .
-
-    $default  reduce using rule 76 (operator)
+	.  reduce 78
 
 
 state 76
+	operator : '/' .  (79)
 
-   77 operator: '%' .
-
-    $default  reduce using rule 77 (operator)
+	.  reduce 79
 
 
 state 77
+	operator : '%' .  (80)
 
-   78 operator: '+' .
-
-    $default  reduce using rule 78 (operator)
+	.  reduce 80
 
 
 state 78
+	operator : '+' .  (81)
 
-   74 operator: '-' .
-
-    $default  reduce using rule 74 (operator)
+	.  reduce 81
 
 
 state 79
+	operator : '-' .  (77)
 
-   82 logical: '<' .
-
-    $default  reduce using rule 82 (logical)
+	.  reduce 77
 
 
 state 80
+	logical : '<' .  (85)
 
-   83 logical: '>' .
-
-    $default  reduce using rule 83 (logical)
+	.  reduce 85
 
 
 state 81
+	logical : '>' .  (86)
 
-   87 logical: NE .
-
-    $default  reduce using rule 87 (logical)
+	.  reduce 86
 
 
 state 82
+	logical : LE .  (87)
 
-   86 logical: GE .
-
-    $default  reduce using rule 86 (logical)
+	.  reduce 87
 
 
 state 83
+	logical : EQ .  (88)
 
-   85 logical: EQ .
-
-    $default  reduce using rule 85 (logical)
+	.  reduce 88
 
 
 state 84
+	logical : GE .  (89)
 
-   84 logical: LE .
-
-    $default  reduce using rule 84 (logical)
+	.  reduce 89
 
 
 state 85
+	logical : NE .  (90)
 
-   80 operator: AND .
-
-    $default  reduce using rule 80 (operator)
+	.  reduce 90
 
 
 state 86
+	operator : AND .  (83)
 
-   81 operator: OR .
-
-    $default  reduce using rule 81 (operator)
+	.  reduce 83
 
 
 state 87
+	operator : OR .  (84)
 
-   66 expression: expression_component operator . expression
-
-    ID           shift, and go to state 45
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-    '-'          shift, and go to state 50
-    '!'          shift, and go to state 51
-    '('          shift, and go to state 52
-
-    literal_const         go to state 53
-    array_reference       go to state 54
-    expression            go to state 105
-    expression_component  go to state 56
-    funciton_invocation   go to state 57
+	.  reduce 84
 
 
 state 88
+	expression : expression_component operator . '(' expression ')'  (68)
+	expression : expression_component operator . expression  (69)
 
-   79 operator: logical .
+	ID  shift 44
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 106
+	.  error
 
-    $default  reduce using rule 79 (operator)
+	expression  goto 107
+	literal_const  goto 55
+	array_reference  goto 56
+	expression_component  goto 57
+	funciton_invocation  goto 58
 
 
 state 89
+	operator : logical .  (82)
 
-   35 funct_decl: scalar_type ID '(' arguments ')' . SEMICOLON
-   37 funct_defi: scalar_type ID '(' arguments ')' . compound
-
-    SEMICOLON  shift, and go to state 106
-    '{'        shift, and go to state 97
-
-    compound  go to state 107
+	.  reduce 82
 
 
 state 90
+	funct_decl : scalar_type ID '(' arguments ')' . SEMICOLON  (37)
+	funct_defi : scalar_type ID '(' arguments ')' . compound  (39)
 
-   27 initial_array: '{' . expression_list '}'
+	SEMICOLON  shift 108
+	'{'  shift 98
+	.  error
 
-    ID           shift, and go to state 45
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-    '-'          shift, and go to state 50
-    '!'          shift, and go to state 51
-    '('          shift, and go to state 52
-
-    $default  reduce using rule 108 (expression_list)
-
-    literal_const         go to state 53
-    array_reference       go to state 54
-    expression            go to state 102
-    expression_component  go to state 56
-    funciton_invocation   go to state 57
-    expression_list       go to state 108
+	compound  goto 109
 
 
 state 91
+	initial_array : '{' . expression_list '}'  (27)
+	expression_list : .  (111)
 
-   26 identifier_list: ID array_int '=' initial_array .
+	ID  shift 44
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 53
+	'}'  reduce 111
 
-    $default  reduce using rule 26 (identifier_list)
+	expression  goto 103
+	expression_list  goto 110
+	literal_const  goto 55
+	array_reference  goto 56
+	expression_component  goto 57
+	funciton_invocation  goto 58
 
 
 state 92
+	identifier_list : ID array_int '=' initial_array .  (26)
 
-   23 identifier_list: identifier_list ',' ID '=' . expression
-
-    ID           shift, and go to state 45
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-    '-'          shift, and go to state 50
-    '!'          shift, and go to state 51
-    '('          shift, and go to state 52
-
-    literal_const         go to state 53
-    array_reference       go to state 54
-    expression            go to state 109
-    expression_component  go to state 56
-    funciton_invocation   go to state 57
+	.  reduce 26
 
 
 state 93
+	identifier_list : identifier_list ',' ID '=' . expression  (23)
 
-   18 identifier: ID array_int .
-   25 identifier_list: identifier_list ',' ID array_int . '=' initial_array
+	ID  shift 44
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 53
+	.  error
 
-    '='  shift, and go to state 110
-
-    $default  reduce using rule 18 (identifier)
+	expression  goto 111
+	literal_const  goto 55
+	array_reference  goto 56
+	expression_component  goto 57
+	funciton_invocation  goto 58
 
 
 state 94
+	identifier : ID array_int .  (18)
+	identifier_list : identifier_list ',' ID array_int . '=' initial_array  (25)
 
-   29 const_list: ID '=' literal_const ',' . const_list
-
-    ID  shift, and go to state 27
-
-    const_list  go to state 111
+	'='  shift 112
+	SEMICOLON  reduce 18
+	','  reduce 18
 
 
 state 95
+	const_list : ID '=' literal_const ',' . const_list  (29)
 
-   18 identifier: ID array_int .
+	ID  shift 26
+	.  error
 
-    $default  reduce using rule 18 (identifier)
+	const_list  goto 113
 
 
 state 96
+	identifier : ID array_int .  (18)
 
-   36 funct_decl: VOID ID '(' arguments ')' SEMICOLON .
-
-    $default  reduce using rule 36 (funct_decl)
+	.  reduce 18
 
 
 state 97
+	funct_decl : VOID ID '(' arguments ')' SEMICOLON .  (38)
 
-   51 compound: '{' . compound_list '}'
-
-    ID        shift, and go to state 112
-    CONST     shift, and go to state 1
-    BOOL      shift, and go to state 2
-    FLOAT     shift, and go to state 4
-    DOUBLE    shift, and go to state 5
-    STRING    shift, and go to state 6
-    INT       shift, and go to state 7
-    READ      shift, and go to state 113
-    PRINT     shift, and go to state 114
-    WHILE     shift, and go to state 115
-    DO        shift, and go to state 116
-    IF        shift, and go to state 117
-    FOR       shift, and go to state 118
-    CONTINUE  shift, and go to state 119
-    BREAK     shift, and go to state 120
-    RETURN    shift, and go to state 121
-    '{'       shift, and go to state 97
-
-    $default  reduce using rule 55 (compound_list)
-
-    var_decl             go to state 122
-    scalar_type          go to state 123
-    const_decl           go to state 124
-    statement            go to state 125
-    compound             go to state 126
-    compound_list        go to state 127
-    simple               go to state 128
-    variable_reference   go to state 129
-    array_reference      go to state 130
-    conditional          go to state 131
-    while                go to state 132
-    for                  go to state 133
-    jump                 go to state 134
-    procedure_call       go to state 135
-    funciton_invocation  go to state 136
+	.  reduce 38
 
 
 state 98
+	compound : '{' . compound_list '}'  (53)
+	compound_list : .  (57)
 
-   38 funct_defi: VOID ID '(' arguments ')' compound .
+	ID  shift 114
+	CONST  shift 1
+	BOOL  shift 2
+	FLOAT  shift 4
+	DOUBLE  shift 5
+	STRING  shift 6
+	INT  shift 7
+	READ  shift 115
+	PRINT  shift 116
+	WHILE  shift 117
+	DO  shift 118
+	IF  shift 119
+	FOR  shift 120
+	CONTINUE  shift 121
+	BREAK  shift 122
+	RETURN  shift 123
+	'{'  shift 98
+	'}'  reduce 57
 
-    $default  reduce using rule 38 (funct_defi)
+	const_decl  goto 124
+	var_decl  goto 125
+	scalar_type  goto 126
+	compound  goto 127
+	statement  goto 128
+	simple  goto 129
+	conditional  goto 130
+	while  goto 131
+	for  goto 132
+	jump  goto 133
+	procedure_call  goto 134
+	compound_list  goto 135
+	variable_reference  goto 136
+	array_reference  goto 137
+	funciton_invocation  goto 138
 
 
 state 99
+	funct_defi : VOID ID '(' arguments ')' compound .  (40)
 
-   41 nonempty_arguments: nonempty_arguments ',' argument .
-
-    $default  reduce using rule 41 (nonempty_arguments)
+	.  reduce 40
 
 
 state 100
+	nonempty_arguments : nonempty_arguments ',' argument .  (43)
 
-   20 array_int: '[' INTEGER ']' array_int .
-
-    $default  reduce using rule 20 (array_int)
+	.  reduce 43
 
 
 state 101
+	array_int : '[' INTEGER ']' array_int .  (20)
 
-   63 array_expre: '[' expression . ']' array_expre
-   64            | '[' expression . ']'
-
-    ']'  shift, and go to state 137
+	.  reduce 20
 
 
 state 102
+	array_expre : '[' expression . ']' array_expre  (65)
+	array_expre : '[' expression . ']'  (66)
 
-  106 expression_list: expression . ',' expression_list
-  107                | expression .
-
-    ','  shift, and go to state 138
-
-    $default  reduce using rule 107 (expression_list)
+	']'  shift 139
+	.  error
 
 
 state 103
+	expression_list : expression . ',' expression_list  (109)
+	expression_list : expression .  (110)
 
-  105 funciton_invocation: ID '(' expression_list . ')' SEMICOLON
-
-    ')'  shift, and go to state 139
+	','  shift 140
+	'}'  reduce 110
+	')'  reduce 110
 
 
 state 104
+	funciton_invocation : ID '(' expression_list . ')' SEMICOLON  (108)
 
-   67 expression: '(' expression ')' .
-
-    $default  reduce using rule 67 (expression)
+	')'  shift 141
+	.  error
 
 
 state 105
+	expression : '(' expression ')' .  (70)
 
-   66 expression: expression_component operator expression .
-
-    $default  reduce using rule 66 (expression)
+	.  reduce 70
 
 
 state 106
+	expression : expression_component operator '(' . expression ')'  (68)
+	expression : '(' . expression ')'  (70)
 
-   35 funct_decl: scalar_type ID '(' arguments ')' SEMICOLON .
+	ID  shift 44
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 53
+	.  error
 
-    $default  reduce using rule 35 (funct_decl)
+	expression  goto 142
+	literal_const  goto 55
+	array_reference  goto 56
+	expression_component  goto 57
+	funciton_invocation  goto 58
 
 
 state 107
+	expression : expression_component operator expression .  (69)
 
-   37 funct_defi: scalar_type ID '(' arguments ')' compound .
-
-    $default  reduce using rule 37 (funct_defi)
+	.  reduce 69
 
 
 state 108
+	funct_decl : scalar_type ID '(' arguments ')' SEMICOLON .  (37)
 
-   27 initial_array: '{' expression_list . '}'
-
-    '}'  shift, and go to state 140
+	.  reduce 37
 
 
 state 109
+	funct_defi : scalar_type ID '(' arguments ')' compound .  (39)
 
-   23 identifier_list: identifier_list ',' ID '=' expression .
-
-    $default  reduce using rule 23 (identifier_list)
+	.  reduce 39
 
 
 state 110
+	initial_array : '{' expression_list . '}'  (27)
 
-   25 identifier_list: identifier_list ',' ID array_int '=' . initial_array
-
-    '{'  shift, and go to state 90
-
-    initial_array  go to state 141
+	'}'  shift 143
+	.  error
 
 
 state 111
+	identifier_list : identifier_list ',' ID '=' expression .  (23)
 
-   29 const_list: ID '=' literal_const ',' const_list .
-
-    $default  reduce using rule 29 (const_list)
+	.  reduce 23
 
 
 state 112
+	identifier_list : identifier_list ',' ID array_int '=' . initial_array  (25)
 
-   60 variable_reference: ID .
-   62 array_reference: ID . array_expre
-  105 funciton_invocation: ID . '(' expression_list ')' SEMICOLON
+	'{'  shift 91
+	.  error
 
-    '['  shift, and go to state 68
-    '('  shift, and go to state 69
-
-    $default  reduce using rule 60 (variable_reference)
-
-    array_expre  go to state 70
+	initial_array  goto 144
 
 
 state 113
+	const_list : ID '=' literal_const ',' const_list .  (29)
 
-   59 simple: READ . variable_reference
-
-    ID  shift, and go to state 142
-
-    variable_reference  go to state 143
-    array_reference     go to state 130
+	.  reduce 29
 
 
 state 114
+	variable_reference : ID .  (62)
+	array_reference : ID . array_expre  (64)
+	funciton_invocation : ID . '(' expression_list ')' SEMICOLON  (108)
 
-   57 simple: PRINT . variable_reference SEMICOLON
-   58       | PRINT . expression SEMICOLON
+	'['  shift 69
+	'('  shift 70
+	'='  reduce 62
 
-    ID           shift, and go to state 144
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-    '-'          shift, and go to state 50
-    '!'          shift, and go to state 51
-    '('          shift, and go to state 52
-
-    literal_const         go to state 53
-    variable_reference    go to state 145
-    array_reference       go to state 146
-    expression            go to state 147
-    expression_component  go to state 56
-    funciton_invocation   go to state 57
+	array_expre  goto 71
 
 
 state 115
+	simple : READ . variable_reference  (61)
 
-   90 while: WHILE . '(' boolean_expression ')' compound
+	ID  shift 145
+	.  error
 
-    '('  shift, and go to state 148
+	variable_reference  goto 146
+	array_reference  goto 137
 
 
 state 116
+	simple : PRINT . variable_reference SEMICOLON  (59)
+	simple : PRINT . expression SEMICOLON  (60)
 
-   91 while: DO . compound WHILE '(' boolean_expression ')'
+	ID  shift 147
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 53
+	.  error
 
-    '{'  shift, and go to state 97
-
-    compound  go to state 149
+	expression  goto 148
+	literal_const  goto 55
+	variable_reference  goto 149
+	array_reference  goto 150
+	expression_component  goto 57
+	funciton_invocation  goto 58
 
 
 state 117
+	while : WHILE . '(' boolean_expression ')' compound  (93)
 
-   88 conditional: IF . '(' boolean_expression ')' compound ELSE compound
-   89            | IF . '(' boolean_expression ')' compound
-
-    '('  shift, and go to state 150
+	'('  shift 151
+	.  error
 
 
 state 118
+	while : DO . compound WHILE '(' boolean_expression ')' SEMICOLON  (94)
 
-   93 for: FOR . '(' initial_expression SEMICOLON control_expression SEMICOLON increment_expression ')'
+	'{'  shift 98
+	.  error
 
-    '('  shift, and go to state 151
+	compound  goto 152
 
 
 state 119
+	conditional : IF . '(' boolean_expression ')' compound ELSE compound  (91)
+	conditional : IF . '(' boolean_expression ')' compound  (92)
 
-  103 jump: CONTINUE . SEMICOLON
-
-    SEMICOLON  shift, and go to state 152
+	'('  shift 153
+	.  error
 
 
 state 120
+	for : FOR . '(' initial_expression SEMICOLON control_expression SEMICOLON increment_expression ')'  (96)
 
-  102 jump: BREAK . SEMICOLON
-
-    SEMICOLON  shift, and go to state 153
+	'('  shift 154
+	.  error
 
 
 state 121
+	jump : CONTINUE . SEMICOLON  (106)
 
-  101 jump: RETURN . expression SEMICOLON
-
-    ID           shift, and go to state 45
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-    '-'          shift, and go to state 50
-    '!'          shift, and go to state 51
-    '('          shift, and go to state 52
-
-    literal_const         go to state 53
-    array_reference       go to state 54
-    expression            go to state 154
-    expression_component  go to state 56
-    funciton_invocation   go to state 57
+	SEMICOLON  shift 155
+	.  error
 
 
 state 122
+	jump : BREAK . SEMICOLON  (105)
 
-   52 compound_list: var_decl . compound_list
-
-    ID        shift, and go to state 112
-    CONST     shift, and go to state 1
-    BOOL      shift, and go to state 2
-    FLOAT     shift, and go to state 4
-    DOUBLE    shift, and go to state 5
-    STRING    shift, and go to state 6
-    INT       shift, and go to state 7
-    READ      shift, and go to state 113
-    PRINT     shift, and go to state 114
-    WHILE     shift, and go to state 115
-    DO        shift, and go to state 116
-    IF        shift, and go to state 117
-    FOR       shift, and go to state 118
-    CONTINUE  shift, and go to state 119
-    BREAK     shift, and go to state 120
-    RETURN    shift, and go to state 121
-    '{'       shift, and go to state 97
-
-    $default  reduce using rule 55 (compound_list)
-
-    var_decl             go to state 122
-    scalar_type          go to state 123
-    const_decl           go to state 124
-    statement            go to state 125
-    compound             go to state 126
-    compound_list        go to state 155
-    simple               go to state 128
-    variable_reference   go to state 129
-    array_reference      go to state 130
-    conditional          go to state 131
-    while                go to state 132
-    for                  go to state 133
-    jump                 go to state 134
-    procedure_call       go to state 135
-    funciton_invocation  go to state 136
+	SEMICOLON  shift 156
+	.  error
 
 
 state 123
+	jump : RETURN . expression SEMICOLON  (104)
 
-   11 var_decl: scalar_type . identifier_list SEMICOLON
+	ID  shift 44
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 53
+	.  error
 
-    ID  shift, and go to state 156
-
-    identifier       go to state 25
-    identifier_list  go to state 26
+	expression  goto 157
+	literal_const  goto 55
+	array_reference  goto 56
+	expression_component  goto 57
+	funciton_invocation  goto 58
 
 
 state 124
+	compound_list : const_decl . compound_list  (55)
+	compound_list : .  (57)
 
-   53 compound_list: const_decl . compound_list
+	ID  shift 114
+	CONST  shift 1
+	BOOL  shift 2
+	FLOAT  shift 4
+	DOUBLE  shift 5
+	STRING  shift 6
+	INT  shift 7
+	READ  shift 115
+	PRINT  shift 116
+	WHILE  shift 117
+	DO  shift 118
+	IF  shift 119
+	FOR  shift 120
+	CONTINUE  shift 121
+	BREAK  shift 122
+	RETURN  shift 123
+	'{'  shift 98
+	'}'  reduce 57
 
-    ID        shift, and go to state 112
-    CONST     shift, and go to state 1
-    BOOL      shift, and go to state 2
-    FLOAT     shift, and go to state 4
-    DOUBLE    shift, and go to state 5
-    STRING    shift, and go to state 6
-    INT       shift, and go to state 7
-    READ      shift, and go to state 113
-    PRINT     shift, and go to state 114
-    WHILE     shift, and go to state 115
-    DO        shift, and go to state 116
-    IF        shift, and go to state 117
-    FOR       shift, and go to state 118
-    CONTINUE  shift, and go to state 119
-    BREAK     shift, and go to state 120
-    RETURN    shift, and go to state 121
-    '{'       shift, and go to state 97
-
-    $default  reduce using rule 55 (compound_list)
-
-    var_decl             go to state 122
-    scalar_type          go to state 123
-    const_decl           go to state 124
-    statement            go to state 125
-    compound             go to state 126
-    compound_list        go to state 157
-    simple               go to state 128
-    variable_reference   go to state 129
-    array_reference      go to state 130
-    conditional          go to state 131
-    while                go to state 132
-    for                  go to state 133
-    jump                 go to state 134
-    procedure_call       go to state 135
-    funciton_invocation  go to state 136
+	const_decl  goto 124
+	var_decl  goto 125
+	scalar_type  goto 126
+	compound  goto 127
+	statement  goto 128
+	simple  goto 129
+	conditional  goto 130
+	while  goto 131
+	for  goto 132
+	jump  goto 133
+	procedure_call  goto 134
+	compound_list  goto 158
+	variable_reference  goto 136
+	array_reference  goto 137
+	funciton_invocation  goto 138
 
 
 state 125
+	compound_list : var_decl . compound_list  (54)
+	compound_list : .  (57)
 
-   54 compound_list: statement . compound_list
+	ID  shift 114
+	CONST  shift 1
+	BOOL  shift 2
+	FLOAT  shift 4
+	DOUBLE  shift 5
+	STRING  shift 6
+	INT  shift 7
+	READ  shift 115
+	PRINT  shift 116
+	WHILE  shift 117
+	DO  shift 118
+	IF  shift 119
+	FOR  shift 120
+	CONTINUE  shift 121
+	BREAK  shift 122
+	RETURN  shift 123
+	'{'  shift 98
+	'}'  reduce 57
 
-    ID        shift, and go to state 112
-    CONST     shift, and go to state 1
-    BOOL      shift, and go to state 2
-    FLOAT     shift, and go to state 4
-    DOUBLE    shift, and go to state 5
-    STRING    shift, and go to state 6
-    INT       shift, and go to state 7
-    READ      shift, and go to state 113
-    PRINT     shift, and go to state 114
-    WHILE     shift, and go to state 115
-    DO        shift, and go to state 116
-    IF        shift, and go to state 117
-    FOR       shift, and go to state 118
-    CONTINUE  shift, and go to state 119
-    BREAK     shift, and go to state 120
-    RETURN    shift, and go to state 121
-    '{'       shift, and go to state 97
-
-    $default  reduce using rule 55 (compound_list)
-
-    var_decl             go to state 122
-    scalar_type          go to state 123
-    const_decl           go to state 124
-    statement            go to state 125
-    compound             go to state 126
-    compound_list        go to state 158
-    simple               go to state 128
-    variable_reference   go to state 129
-    array_reference      go to state 130
-    conditional          go to state 131
-    while                go to state 132
-    for                  go to state 133
-    jump                 go to state 134
-    procedure_call       go to state 135
-    funciton_invocation  go to state 136
+	const_decl  goto 124
+	var_decl  goto 125
+	scalar_type  goto 126
+	compound  goto 127
+	statement  goto 128
+	simple  goto 129
+	conditional  goto 130
+	while  goto 131
+	for  goto 132
+	jump  goto 133
+	procedure_call  goto 134
+	compound_list  goto 159
+	variable_reference  goto 136
+	array_reference  goto 137
+	funciton_invocation  goto 138
 
 
 state 126
+	var_decl : scalar_type . identifier_list SEMICOLON  (11)
 
-   44 statement: compound .
+	ID  shift 160
+	.  error
 
-    $default  reduce using rule 44 (statement)
+	identifier_list  goto 24
+	identifier  goto 25
 
 
 state 127
+	statement : compound .  (46)
 
-   51 compound: '{' compound_list . '}'
-
-    '}'  shift, and go to state 159
+	.  reduce 46
 
 
 state 128
+	compound_list : statement . compound_list  (56)
+	compound_list : .  (57)
 
-   45 statement: simple .
+	ID  shift 114
+	CONST  shift 1
+	BOOL  shift 2
+	FLOAT  shift 4
+	DOUBLE  shift 5
+	STRING  shift 6
+	INT  shift 7
+	READ  shift 115
+	PRINT  shift 116
+	WHILE  shift 117
+	DO  shift 118
+	IF  shift 119
+	FOR  shift 120
+	CONTINUE  shift 121
+	BREAK  shift 122
+	RETURN  shift 123
+	'{'  shift 98
+	'}'  reduce 57
 
-    $default  reduce using rule 45 (statement)
+	const_decl  goto 124
+	var_decl  goto 125
+	scalar_type  goto 126
+	compound  goto 127
+	statement  goto 128
+	simple  goto 129
+	conditional  goto 130
+	while  goto 131
+	for  goto 132
+	jump  goto 133
+	procedure_call  goto 134
+	compound_list  goto 161
+	variable_reference  goto 136
+	array_reference  goto 137
+	funciton_invocation  goto 138
 
 
 state 129
+	statement : simple .  (47)
 
-   56 simple: variable_reference . '=' expression SEMICOLON
-
-    '='  shift, and go to state 160
+	.  reduce 47
 
 
 state 130
+	statement : conditional .  (48)
 
-   61 variable_reference: array_reference .
-
-    $default  reduce using rule 61 (variable_reference)
+	.  reduce 48
 
 
 state 131
+	statement : while .  (49)
 
-   46 statement: conditional .
-
-    $default  reduce using rule 46 (statement)
+	.  reduce 49
 
 
 state 132
+	statement : for .  (50)
 
-   47 statement: while .
-
-    $default  reduce using rule 47 (statement)
+	.  reduce 50
 
 
 state 133
+	statement : jump .  (51)
 
-   48 statement: for .
-
-    $default  reduce using rule 48 (statement)
+	.  reduce 51
 
 
 state 134
+	statement : procedure_call .  (52)
 
-   49 statement: jump .
-
-    $default  reduce using rule 49 (statement)
+	.  reduce 52
 
 
 state 135
+	compound : '{' compound_list . '}'  (53)
 
-   50 statement: procedure_call .
-
-    $default  reduce using rule 50 (statement)
+	'}'  shift 162
+	.  error
 
 
 state 136
+	simple : variable_reference . '=' expression SEMICOLON  (58)
 
-  104 procedure_call: funciton_invocation .
-
-    $default  reduce using rule 104 (procedure_call)
+	'='  shift 163
+	.  error
 
 
 state 137
+	variable_reference : array_reference .  (63)
 
-   63 array_expre: '[' expression ']' . array_expre
-   64            | '[' expression ']' .
-
-    '['  shift, and go to state 68
-
-    $default  reduce using rule 64 (array_expre)
-
-    array_expre  go to state 161
+	.  reduce 63
 
 
 state 138
+	procedure_call : funciton_invocation .  (107)
 
-  106 expression_list: expression ',' . expression_list
-
-    ID           shift, and go to state 45
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-    '-'          shift, and go to state 50
-    '!'          shift, and go to state 51
-    '('          shift, and go to state 52
-
-    $default  reduce using rule 108 (expression_list)
-
-    literal_const         go to state 53
-    array_reference       go to state 54
-    expression            go to state 102
-    expression_component  go to state 56
-    funciton_invocation   go to state 57
-    expression_list       go to state 162
+	.  reduce 107
 
 
 state 139
+	array_expre : '[' expression ']' . array_expre  (65)
+	array_expre : '[' expression ']' .  (66)
 
-  105 funciton_invocation: ID '(' expression_list ')' . SEMICOLON
+	'['  shift 69
+	SEMICOLON  reduce 66
+	ID  reduce 66
+	CONST  reduce 66
+	BOOL  reduce 66
+	FLOAT  reduce 66
+	DOUBLE  reduce 66
+	STRING  reduce 66
+	INT  reduce 66
+	READ  reduce 66
+	PRINT  reduce 66
+	WHILE  reduce 66
+	DO  reduce 66
+	IF  reduce 66
+	FOR  reduce 66
+	CONTINUE  reduce 66
+	BREAK  reduce 66
+	RETURN  reduce 66
+	'*'  reduce 66
+	'/'  reduce 66
+	'%'  reduce 66
+	'+'  reduce 66
+	'-'  reduce 66
+	'<'  reduce 66
+	'>'  reduce 66
+	LE  reduce 66
+	EQ  reduce 66
+	GE  reduce 66
+	NE  reduce 66
+	AND  reduce 66
+	OR  reduce 66
+	']'  reduce 66
+	','  reduce 66
+	'='  reduce 66
+	'{'  reduce 66
+	'}'  reduce 66
+	')'  reduce 66
 
-    SEMICOLON  shift, and go to state 163
+	array_expre  goto 164
 
 
 state 140
+	expression_list : expression ',' . expression_list  (109)
+	expression_list : .  (111)
 
-   27 initial_array: '{' expression_list '}' .
+	ID  shift 44
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 53
+	'}'  reduce 111
+	')'  reduce 111
 
-    $default  reduce using rule 27 (initial_array)
+	expression  goto 103
+	expression_list  goto 165
+	literal_const  goto 55
+	array_reference  goto 56
+	expression_component  goto 57
+	funciton_invocation  goto 58
 
 
 state 141
+	funciton_invocation : ID '(' expression_list ')' . SEMICOLON  (108)
 
-   25 identifier_list: identifier_list ',' ID array_int '=' initial_array .
-
-    $default  reduce using rule 25 (identifier_list)
+	SEMICOLON  shift 166
+	.  error
 
 
 state 142
+	expression : expression_component operator '(' expression . ')'  (68)
+	expression : '(' expression . ')'  (70)
 
-   60 variable_reference: ID .
-   62 array_reference: ID . array_expre
-
-    '['  shift, and go to state 68
-
-    $default  reduce using rule 60 (variable_reference)
-
-    array_expre  go to state 70
+	')'  shift 167
+	.  error
 
 
 state 143
+	initial_array : '{' expression_list '}' .  (27)
 
-   59 simple: READ variable_reference .
-
-    $default  reduce using rule 59 (simple)
+	.  reduce 27
 
 
 state 144
+	identifier_list : identifier_list ',' ID array_int '=' initial_array .  (25)
 
-   60 variable_reference: ID .
-   62 array_reference: ID . array_expre
-   71 expression_component: ID .
-  105 funciton_invocation: ID . '(' expression_list ')' SEMICOLON
-
-    '['  shift, and go to state 68
-    '('  shift, and go to state 69
-
-    SEMICOLON  reduce using rule 60 (variable_reference)
-    SEMICOLON  [reduce using rule 71 (expression_component)]
-    $default   reduce using rule 71 (expression_component)
-
-    array_expre  go to state 70
+	.  reduce 25
 
 
 state 145
+	variable_reference : ID .  (62)
+	array_reference : ID . array_expre  (64)
 
-   57 simple: PRINT variable_reference . SEMICOLON
+	'['  shift 69
+	ID  reduce 62
+	CONST  reduce 62
+	BOOL  reduce 62
+	FLOAT  reduce 62
+	DOUBLE  reduce 62
+	STRING  reduce 62
+	INT  reduce 62
+	READ  reduce 62
+	PRINT  reduce 62
+	WHILE  reduce 62
+	DO  reduce 62
+	IF  reduce 62
+	FOR  reduce 62
+	CONTINUE  reduce 62
+	BREAK  reduce 62
+	RETURN  reduce 62
+	'{'  reduce 62
+	'}'  reduce 62
 
-    SEMICOLON  shift, and go to state 164
+	array_expre  goto 71
 
 
 state 146
+	simple : READ variable_reference .  (61)
 
-   61 variable_reference: array_reference .
-   73 expression_component: array_reference .
-
-    SEMICOLON  reduce using rule 61 (variable_reference)
-    SEMICOLON  [reduce using rule 73 (expression_component)]
-    $default   reduce using rule 73 (expression_component)
+	.  reduce 61
 
 
+147: reduce/reduce conflict (reduce 62, reduce 74) on SEMICOLON
 state 147
+	variable_reference : ID .  (62)
+	array_reference : ID . array_expre  (64)
+	expression_component : ID .  (74)
+	funciton_invocation : ID . '(' expression_list ')' SEMICOLON  (108)
 
-   58 simple: PRINT expression . SEMICOLON
+	'['  shift 69
+	'('  shift 70
+	SEMICOLON  reduce 62
+	'*'  reduce 74
+	'/'  reduce 74
+	'%'  reduce 74
+	'+'  reduce 74
+	'-'  reduce 74
+	'<'  reduce 74
+	'>'  reduce 74
+	LE  reduce 74
+	EQ  reduce 74
+	GE  reduce 74
+	NE  reduce 74
+	AND  reduce 74
+	OR  reduce 74
 
-    SEMICOLON  shift, and go to state 165
+	array_expre  goto 71
 
 
 state 148
+	simple : PRINT expression . SEMICOLON  (60)
 
-   90 while: WHILE '(' . boolean_expression ')' compound
-
-    ID           shift, and go to state 45
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-    '-'          shift, and go to state 50
-    '!'          shift, and go to state 51
-    '('          shift, and go to state 52
-
-    literal_const         go to state 53
-    array_reference       go to state 54
-    expression            go to state 166
-    expression_component  go to state 56
-    boolean_expression    go to state 167
-    funciton_invocation   go to state 57
+	SEMICOLON  shift 168
+	.  error
 
 
 state 149
+	simple : PRINT variable_reference . SEMICOLON  (59)
 
-   91 while: DO compound . WHILE '(' boolean_expression ')'
+	SEMICOLON  shift 169
+	.  error
 
-    WHILE  shift, and go to state 168
 
-
+150: reduce/reduce conflict (reduce 63, reduce 76) on SEMICOLON
 state 150
+	variable_reference : array_reference .  (63)
+	expression_component : array_reference .  (76)
 
-   88 conditional: IF '(' . boolean_expression ')' compound ELSE compound
-   89            | IF '(' . boolean_expression ')' compound
-
-    ID           shift, and go to state 45
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-    '-'          shift, and go to state 50
-    '!'          shift, and go to state 51
-    '('          shift, and go to state 52
-
-    literal_const         go to state 53
-    array_reference       go to state 54
-    expression            go to state 166
-    expression_component  go to state 56
-    boolean_expression    go to state 169
-    funciton_invocation   go to state 57
+	SEMICOLON  reduce 63
+	'*'  reduce 76
+	'/'  reduce 76
+	'%'  reduce 76
+	'+'  reduce 76
+	'-'  reduce 76
+	'<'  reduce 76
+	'>'  reduce 76
+	LE  reduce 76
+	EQ  reduce 76
+	GE  reduce 76
+	NE  reduce 76
+	AND  reduce 76
+	OR  reduce 76
 
 
 state 151
+	while : WHILE '(' . boolean_expression ')' compound  (93)
 
-   93 for: FOR '(' . initial_expression SEMICOLON control_expression SEMICOLON increment_expression ')'
+	ID  shift 44
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 53
+	.  error
 
-    ID      shift, and go to state 170
-    BOOL    shift, and go to state 2
-    FLOAT   shift, and go to state 4
-    DOUBLE  shift, and go to state 5
-    STRING  shift, and go to state 6
-    INT     shift, and go to state 7
-
-    $default  reduce using rule 96 (initial_expression)
-
-    scalar_type         go to state 171
-    initial_expression  go to state 172
+	expression  goto 170
+	literal_const  goto 55
+	array_reference  goto 56
+	expression_component  goto 57
+	funciton_invocation  goto 58
+	boolean_expression  goto 171
 
 
 state 152
+	while : DO compound . WHILE '(' boolean_expression ')' SEMICOLON  (94)
 
-  103 jump: CONTINUE SEMICOLON .
-
-    $default  reduce using rule 103 (jump)
+	WHILE  shift 172
+	.  error
 
 
 state 153
+	conditional : IF '(' . boolean_expression ')' compound ELSE compound  (91)
+	conditional : IF '(' . boolean_expression ')' compound  (92)
 
-  102 jump: BREAK SEMICOLON .
+	ID  shift 44
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 53
+	.  error
 
-    $default  reduce using rule 102 (jump)
+	expression  goto 170
+	literal_const  goto 55
+	array_reference  goto 56
+	expression_component  goto 57
+	funciton_invocation  goto 58
+	boolean_expression  goto 173
 
 
 state 154
+	for : FOR '(' . initial_expression SEMICOLON control_expression SEMICOLON increment_expression ')'  (96)
+	initial_expression : .  (99)
 
-  101 jump: RETURN expression . SEMICOLON
+	ID  shift 174
+	BOOL  shift 2
+	FLOAT  shift 4
+	DOUBLE  shift 5
+	STRING  shift 6
+	INT  shift 7
+	SEMICOLON  reduce 99
 
-    SEMICOLON  shift, and go to state 173
+	scalar_type  goto 175
+	initial_expression  goto 176
 
 
 state 155
+	jump : CONTINUE SEMICOLON .  (106)
 
-   52 compound_list: var_decl compound_list .
-
-    $default  reduce using rule 52 (compound_list)
+	.  reduce 106
 
 
 state 156
+	jump : BREAK SEMICOLON .  (105)
 
-   17 identifier: ID .
-   18           | ID . array_int
-   24 identifier_list: ID . '=' expression
-   26                | ID . array_int '=' initial_array
-
-    '['  shift, and go to state 32
-    '='  shift, and go to state 33
-
-    $default  reduce using rule 17 (identifier)
-
-    array_int  go to state 35
+	.  reduce 105
 
 
 state 157
+	jump : RETURN expression . SEMICOLON  (104)
 
-   53 compound_list: const_decl compound_list .
-
-    $default  reduce using rule 53 (compound_list)
+	SEMICOLON  shift 177
+	.  error
 
 
 state 158
+	compound_list : const_decl compound_list .  (55)
 
-   54 compound_list: statement compound_list .
-
-    $default  reduce using rule 54 (compound_list)
+	.  reduce 55
 
 
 state 159
+	compound_list : var_decl compound_list .  (54)
 
-   51 compound: '{' compound_list '}' .
-
-    $default  reduce using rule 51 (compound)
+	.  reduce 54
 
 
 state 160
+	identifier : ID .  (17)
+	identifier : ID . array_int  (18)
+	identifier_list : ID . '=' expression  (24)
+	identifier_list : ID . array_int '=' initial_array  (26)
 
-   56 simple: variable_reference '=' . expression SEMICOLON
+	'['  shift 31
+	'='  shift 32
+	SEMICOLON  reduce 17
+	','  reduce 17
 
-    ID           shift, and go to state 45
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-    '-'          shift, and go to state 50
-    '!'          shift, and go to state 51
-    '('          shift, and go to state 52
-
-    literal_const         go to state 53
-    array_reference       go to state 54
-    expression            go to state 174
-    expression_component  go to state 56
-    funciton_invocation   go to state 57
+	array_int  goto 34
 
 
 state 161
+	compound_list : statement compound_list .  (56)
 
-   63 array_expre: '[' expression ']' array_expre .
-
-    $default  reduce using rule 63 (array_expre)
+	.  reduce 56
 
 
 state 162
+	compound : '{' compound_list '}' .  (53)
 
-  106 expression_list: expression ',' expression_list .
-
-    $default  reduce using rule 106 (expression_list)
+	.  reduce 53
 
 
 state 163
+	simple : variable_reference '=' . expression SEMICOLON  (58)
 
-  105 funciton_invocation: ID '(' expression_list ')' SEMICOLON .
+	ID  shift 44
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 53
+	.  error
 
-    $default  reduce using rule 105 (funciton_invocation)
+	expression  goto 178
+	literal_const  goto 55
+	array_reference  goto 56
+	expression_component  goto 57
+	funciton_invocation  goto 58
 
 
 state 164
+	array_expre : '[' expression ']' array_expre .  (65)
 
-   57 simple: PRINT variable_reference SEMICOLON .
-
-    $default  reduce using rule 57 (simple)
+	.  reduce 65
 
 
 state 165
+	expression_list : expression ',' expression_list .  (109)
 
-   58 simple: PRINT expression SEMICOLON .
-
-    $default  reduce using rule 58 (simple)
+	.  reduce 109
 
 
 state 166
+	funciton_invocation : ID '(' expression_list ')' SEMICOLON .  (108)
 
-   92 boolean_expression: expression .
-
-    $default  reduce using rule 92 (boolean_expression)
+	.  reduce 108
 
 
+167: reduce/reduce conflict (reduce 68, reduce 70) on SEMICOLON
+167: reduce/reduce conflict (reduce 68, reduce 70) on ']'
+167: reduce/reduce conflict (reduce 68, reduce 70) on ','
+167: reduce/reduce conflict (reduce 68, reduce 70) on '}'
+167: reduce/reduce conflict (reduce 68, reduce 70) on ')'
 state 167
+	expression : expression_component operator '(' expression ')' .  (68)
+	expression : '(' expression ')' .  (70)
 
-   90 while: WHILE '(' boolean_expression . ')' compound
-
-    ')'  shift, and go to state 175
+	.  reduce 68
 
 
 state 168
+	simple : PRINT expression SEMICOLON .  (60)
 
-   91 while: DO compound WHILE . '(' boolean_expression ')'
-
-    '('  shift, and go to state 176
+	.  reduce 60
 
 
 state 169
+	simple : PRINT variable_reference SEMICOLON .  (59)
 
-   88 conditional: IF '(' boolean_expression . ')' compound ELSE compound
-   89            | IF '(' boolean_expression . ')' compound
-
-    ')'  shift, and go to state 177
+	.  reduce 59
 
 
 state 170
+	boolean_expression : expression .  (95)
 
-   94 initial_expression: ID . '=' expression
-
-    '='  shift, and go to state 178
+	.  reduce 95
 
 
 state 171
+	while : WHILE '(' boolean_expression . ')' compound  (93)
 
-   95 initial_expression: scalar_type . ID '=' expression
-
-    ID  shift, and go to state 179
+	')'  shift 179
+	.  error
 
 
 state 172
+	while : DO compound WHILE . '(' boolean_expression ')' SEMICOLON  (94)
 
-   93 for: FOR '(' initial_expression . SEMICOLON control_expression SEMICOLON increment_expression ')'
-
-    SEMICOLON  shift, and go to state 180
+	'('  shift 180
+	.  error
 
 
 state 173
+	conditional : IF '(' boolean_expression . ')' compound ELSE compound  (91)
+	conditional : IF '(' boolean_expression . ')' compound  (92)
 
-  101 jump: RETURN expression SEMICOLON .
-
-    $default  reduce using rule 101 (jump)
+	')'  shift 181
+	.  error
 
 
 state 174
+	initial_expression : ID . '=' expression  (97)
 
-   56 simple: variable_reference '=' expression . SEMICOLON
-
-    SEMICOLON  shift, and go to state 181
+	'='  shift 182
+	.  error
 
 
 state 175
+	initial_expression : scalar_type . ID '=' expression  (98)
 
-   90 while: WHILE '(' boolean_expression ')' . compound
-
-    '{'  shift, and go to state 97
-
-    compound  go to state 182
+	ID  shift 183
+	.  error
 
 
 state 176
+	for : FOR '(' initial_expression . SEMICOLON control_expression SEMICOLON increment_expression ')'  (96)
 
-   91 while: DO compound WHILE '(' . boolean_expression ')'
-
-    ID           shift, and go to state 45
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-    '-'          shift, and go to state 50
-    '!'          shift, and go to state 51
-    '('          shift, and go to state 52
-
-    literal_const         go to state 53
-    array_reference       go to state 54
-    expression            go to state 166
-    expression_component  go to state 56
-    boolean_expression    go to state 183
-    funciton_invocation   go to state 57
+	SEMICOLON  shift 184
+	.  error
 
 
 state 177
+	jump : RETURN expression SEMICOLON .  (104)
 
-   88 conditional: IF '(' boolean_expression ')' . compound ELSE compound
-   89            | IF '(' boolean_expression ')' . compound
-
-    '{'  shift, and go to state 97
-
-    compound  go to state 184
+	.  reduce 104
 
 
 state 178
+	simple : variable_reference '=' expression . SEMICOLON  (58)
 
-   94 initial_expression: ID '=' . expression
-
-    ID           shift, and go to state 45
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-    '-'          shift, and go to state 50
-    '!'          shift, and go to state 51
-    '('          shift, and go to state 52
-
-    literal_const         go to state 53
-    array_reference       go to state 54
-    expression            go to state 185
-    expression_component  go to state 56
-    funciton_invocation   go to state 57
+	SEMICOLON  shift 185
+	.  error
 
 
 state 179
+	while : WHILE '(' boolean_expression ')' . compound  (93)
 
-   95 initial_expression: scalar_type ID . '=' expression
+	'{'  shift 98
+	.  error
 
-    '='  shift, and go to state 186
+	compound  goto 186
 
 
 state 180
+	while : DO compound WHILE '(' . boolean_expression ')' SEMICOLON  (94)
 
-   93 for: FOR '(' initial_expression SEMICOLON . control_expression SEMICOLON increment_expression ')'
+	ID  shift 44
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 53
+	.  error
 
-    ID           shift, and go to state 45
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-    '-'          shift, and go to state 50
-    '!'          shift, and go to state 51
-    '('          shift, and go to state 52
-
-    $default  reduce using rule 98 (control_expression)
-
-    literal_const         go to state 53
-    array_reference       go to state 54
-    expression            go to state 187
-    expression_component  go to state 56
-    control_expression    go to state 188
-    funciton_invocation   go to state 57
+	expression  goto 170
+	literal_const  goto 55
+	array_reference  goto 56
+	expression_component  goto 57
+	funciton_invocation  goto 58
+	boolean_expression  goto 187
 
 
 state 181
+	conditional : IF '(' boolean_expression ')' . compound ELSE compound  (91)
+	conditional : IF '(' boolean_expression ')' . compound  (92)
 
-   56 simple: variable_reference '=' expression SEMICOLON .
+	'{'  shift 98
+	.  error
 
-    $default  reduce using rule 56 (simple)
+	compound  goto 188
 
 
 state 182
+	initial_expression : ID '=' . expression  (97)
 
-   90 while: WHILE '(' boolean_expression ')' compound .
+	ID  shift 44
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 53
+	.  error
 
-    $default  reduce using rule 90 (while)
+	expression  goto 189
+	literal_const  goto 55
+	array_reference  goto 56
+	expression_component  goto 57
+	funciton_invocation  goto 58
 
 
 state 183
+	initial_expression : scalar_type ID . '=' expression  (98)
 
-   91 while: DO compound WHILE '(' boolean_expression . ')'
-
-    ')'  shift, and go to state 189
+	'='  shift 190
+	.  error
 
 
 state 184
+	for : FOR '(' initial_expression SEMICOLON . control_expression SEMICOLON increment_expression ')'  (96)
+	control_expression : .  (101)
 
-   88 conditional: IF '(' boolean_expression ')' compound . ELSE compound
-   89            | IF '(' boolean_expression ')' compound .
+	ID  shift 44
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 53
+	SEMICOLON  reduce 101
 
-    ELSE  shift, and go to state 190
-
-    $default  reduce using rule 89 (conditional)
+	expression  goto 191
+	literal_const  goto 55
+	array_reference  goto 56
+	expression_component  goto 57
+	funciton_invocation  goto 58
+	control_expression  goto 192
 
 
 state 185
+	simple : variable_reference '=' expression SEMICOLON .  (58)
 
-   94 initial_expression: ID '=' expression .
-
-    $default  reduce using rule 94 (initial_expression)
+	.  reduce 58
 
 
 state 186
+	while : WHILE '(' boolean_expression ')' compound .  (93)
 
-   95 initial_expression: scalar_type ID '=' . expression
-
-    ID           shift, and go to state 45
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-    '-'          shift, and go to state 50
-    '!'          shift, and go to state 51
-    '('          shift, and go to state 52
-
-    literal_const         go to state 53
-    array_reference       go to state 54
-    expression            go to state 191
-    expression_component  go to state 56
-    funciton_invocation   go to state 57
+	.  reduce 93
 
 
 state 187
+	while : DO compound WHILE '(' boolean_expression . ')' SEMICOLON  (94)
 
-   97 control_expression: expression .
-
-    $default  reduce using rule 97 (control_expression)
+	')'  shift 193
+	.  error
 
 
 state 188
+	conditional : IF '(' boolean_expression ')' compound . ELSE compound  (91)
+	conditional : IF '(' boolean_expression ')' compound .  (92)
 
-   93 for: FOR '(' initial_expression SEMICOLON control_expression . SEMICOLON increment_expression ')'
-
-    SEMICOLON  shift, and go to state 192
+	ELSE  shift 194
+	ID  reduce 92
+	CONST  reduce 92
+	BOOL  reduce 92
+	FLOAT  reduce 92
+	DOUBLE  reduce 92
+	STRING  reduce 92
+	INT  reduce 92
+	READ  reduce 92
+	PRINT  reduce 92
+	WHILE  reduce 92
+	DO  reduce 92
+	IF  reduce 92
+	FOR  reduce 92
+	CONTINUE  reduce 92
+	BREAK  reduce 92
+	RETURN  reduce 92
+	'{'  reduce 92
+	'}'  reduce 92
 
 
 state 189
+	initial_expression : ID '=' expression .  (97)
 
-   91 while: DO compound WHILE '(' boolean_expression ')' .
-
-    $default  reduce using rule 91 (while)
+	.  reduce 97
 
 
 state 190
+	initial_expression : scalar_type ID '=' . expression  (98)
 
-   88 conditional: IF '(' boolean_expression ')' compound ELSE . compound
+	ID  shift 44
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 53
+	.  error
 
-    '{'  shift, and go to state 97
-
-    compound  go to state 193
+	expression  goto 195
+	literal_const  goto 55
+	array_reference  goto 56
+	expression_component  goto 57
+	funciton_invocation  goto 58
 
 
 state 191
+	control_expression : expression .  (100)
 
-   95 initial_expression: scalar_type ID '=' expression .
-
-    $default  reduce using rule 95 (initial_expression)
+	.  reduce 100
 
 
 state 192
+	for : FOR '(' initial_expression SEMICOLON control_expression . SEMICOLON increment_expression ')'  (96)
 
-   93 for: FOR '(' initial_expression SEMICOLON control_expression SEMICOLON . increment_expression ')'
-
-    ID           shift, and go to state 45
-    SCIENTIFIC   shift, and go to state 46
-    INTEGER      shift, and go to state 47
-    FLOATCONST   shift, and go to state 48
-    STRINGCONST  shift, and go to state 49
-    '-'          shift, and go to state 50
-    '!'          shift, and go to state 51
-    '('          shift, and go to state 52
-
-    $default  reduce using rule 100 (increment_expression)
-
-    literal_const         go to state 53
-    array_reference       go to state 54
-    expression            go to state 194
-    expression_component  go to state 56
-    increment_expression  go to state 195
-    funciton_invocation   go to state 57
+	SEMICOLON  shift 196
+	.  error
 
 
 state 193
+	while : DO compound WHILE '(' boolean_expression ')' . SEMICOLON  (94)
 
-   88 conditional: IF '(' boolean_expression ')' compound ELSE compound .
-
-    $default  reduce using rule 88 (conditional)
+	SEMICOLON  shift 197
+	.  error
 
 
 state 194
+	conditional : IF '(' boolean_expression ')' compound ELSE . compound  (91)
 
-   99 increment_expression: expression .
+	'{'  shift 98
+	.  error
 
-    $default  reduce using rule 99 (increment_expression)
+	compound  goto 198
 
 
 state 195
+	initial_expression : scalar_type ID '=' expression .  (98)
 
-   93 for: FOR '(' initial_expression SEMICOLON control_expression SEMICOLON increment_expression . ')'
-
-    ')'  shift, and go to state 196
+	.  reduce 98
 
 
 state 196
+	for : FOR '(' initial_expression SEMICOLON control_expression SEMICOLON . increment_expression ')'  (96)
+	increment_expression : .  (103)
 
-   93 for: FOR '(' initial_expression SEMICOLON control_expression SEMICOLON increment_expression ')' .
+	ID  shift 44
+	SCIENTIFIC  shift 45
+	INTEGER  shift 46
+	FLOATCONST  shift 47
+	STRINGCONST  shift 48
+	TRUE  shift 49
+	FALSE  shift 50
+	'-'  shift 51
+	'!'  shift 52
+	'('  shift 53
+	')'  reduce 103
 
-    $default  reduce using rule 93 (for)
+	expression  goto 199
+	literal_const  goto 55
+	array_reference  goto 56
+	expression_component  goto 57
+	funciton_invocation  goto 58
+	increment_expression  goto 200
+
+
+state 197
+	while : DO compound WHILE '(' boolean_expression ')' SEMICOLON .  (94)
+
+	.  reduce 94
+
+
+state 198
+	conditional : IF '(' boolean_expression ')' compound ELSE compound .  (91)
+
+	.  reduce 91
+
+
+state 199
+	increment_expression : expression .  (102)
+
+	.  reduce 102
+
+
+state 200
+	for : FOR '(' initial_expression SEMICOLON control_expression SEMICOLON increment_expression . ')'  (96)
+
+	')'  shift 201
+	.  error
+
+
+state 201
+	for : FOR '(' initial_expression SEMICOLON control_expression SEMICOLON increment_expression ')' .  (96)
+
+	.  reduce 96
+
+
+State 147 contains 1 reduce/reduce conflict.
+State 150 contains 1 reduce/reduce conflict.
+State 167 contains 5 reduce/reduce conflicts.
+
+
+51 terminals, 42 nonterminals
+112 grammar rules, 202 states

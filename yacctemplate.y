@@ -88,6 +88,8 @@ literal_const : INTEGER
 			| FLOATCONST
 			| STRINGCONST
 			| SCIENTIFIC
+			| TRUE
+			| FALSE
 			;
 
 funct_decl : scalar_type ID '(' arguments ')' SEMICOLON
@@ -147,7 +149,8 @@ array_expre : '[' expression ']' array_expre
 		;
 
 expression : expression_component
-		| expression_component operator expression
+		| expression_component operator '(' expression ')'
+		| expression_component operator  expression
 		| '(' expression ')'
 		| '!' expression
 		| '-' expression
@@ -183,7 +186,7 @@ conditional : IF '(' boolean_expression ')' compound ELSE compound
 
 
 while : WHILE '(' boolean_expression ')' compound
-	| DO compound WHILE '(' boolean_expression ')'
+	| DO compound WHILE '(' boolean_expression ')' SEMICOLON
 	;
 
 boolean_expression : expression
